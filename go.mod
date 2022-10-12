@@ -8,4 +8,5 @@ require (
 	github.com/prometheus/client_golang v1.2.1
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/cobra v0.0.5
+	golang.org/x/sys v0.0.0-20221010170243-090e33056c14 // indirect
 )
