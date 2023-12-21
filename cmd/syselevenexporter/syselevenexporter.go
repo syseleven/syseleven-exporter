@@ -38,6 +38,7 @@ var (
 	logLevel      string
 	logOutput     string
 	metricsPath   string
+	useAppCreds   bool
 )
 
 var rootCmd = &cobra.Command{
@@ -61,26 +62,41 @@ var rootCmd = &cobra.Command{
 		log.Infof(version.Info())
 		log.Infof(version.BuildContext())
 
-		if os.Getenv("OS_USERNAME") == "" {
-			log.Fatalf("OS_USERNAME is missing")
+		if os.Getenv("OS_APPLICATION_CREDENTIAL_ID") == "" || os.Getenv("OS_APPLICATION_CREDENTIAL_SECRET") == "" {
+			useAppCreds = false
+		} else {
+			useAppCreds = true
 		}
 
-		if os.Getenv("OS_PASSWORD") == "" {
-			log.Fatalf("OS_PASSWORD is missing")
-		}
+		if !(useAppCreds) {
+			if os.Getenv("OS_USERNAME") == "" {
+				log.Fatalf("OS_USERNAME is missing. Or to use application credentials set OS_APPLICATION_CREDENTIAL_ID and OS_APPLICATION_CREDENTIAL_SECRET.")
+			}
 
-		if os.Getenv("OS_PROJECT_ID") == "" {
-			log.Fatalf("OS_PROJECT_ID is missing")
+			if os.Getenv("OS_PASSWORD") == "" {
+				log.Fatalf("OS_PASSWORD is missing. Or to use application credentials set OS_APPLICATION_CREDENTIAL_ID and OS_APPLICATION_CREDENTIAL_SECRET.")
+			}
+
+			if os.Getenv("OS_PROJECT_ID") == "" {
+				log.Fatalf("OS_PROJECT_ID is missing. Or to use application credentials set OS_APPLICATION_CREDENTIAL_ID and OS_APPLICATION_CREDENTIAL_SECRET.")
+			}
 		}
 
 		for _, projectID := range strings.Split(os.Getenv("OS_PROJECT_ID"), ",") {
 			go func(id string) {
-				exp, err := exporter.New(id, os.Getenv("OS_USERNAME"), os.Getenv("OS_PASSWORD"))
-				if err != nil {
-					log.WithError(err).Fatal("Could not create exporter")
+				if !(useAppCreds) {
+					exp, err := exporter.New(id, useAppCreds, os.Getenv("OS_USERNAME"), os.Getenv("OS_PASSWORD"))
+					if err != nil {
+						log.WithError(err).Fatal("Could not create exporter")
+					}
+					exporter.Run(interval, exp)
+				} else { //TODO: Use app creds here
+					exp, err := exporter.New(id, useAppCreds, os.Getenv("OS_APPLICATION_CREDENTIAL_ID"), os.Getenv("OS_APPLICATION_CREDENTIAL_SECRET"))
+					if err != nil {
+						log.WithError(err).Fatal("Could not create exporter")
+					}
+					exporter.Run(interval, exp)
 				}
-
-				exporter.Run(interval, exp)
 			}(projectID)
 		}
 

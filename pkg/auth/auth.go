@@ -37,3 +37,20 @@ func GetToken(projectID, username, password string) (string, error) {
 
 	return provider.Token(), nil
 }
+
+func GetTokenAppCreds(projectID, applicationCredentialID, applicationCredentialSecret string) (string, error) {
+	opts := gophercloud.AuthOptions{
+		IdentityEndpoint:            "https://keystone.cloud.syseleven.net:5000/v3",
+		ApplicationCredentialID:     applicationCredentialID,
+		ApplicationCredentialSecret: applicationCredentialSecret,
+		DomainName:                  "Default",
+		TenantID:                    projectID,
+	}
+
+	provider, err := openstack.AuthenticatedClient(opts)
+	if err != nil {
+		return "", err
+	}
+
+	return provider.Token(), nil
+}
