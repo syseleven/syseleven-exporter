@@ -23,6 +23,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/Staffbase/syseleven-exporter/pkg/auth"
 	"github.com/Staffbase/syseleven-exporter/pkg/exporter"
 	"github.com/Staffbase/syseleven-exporter/pkg/version"
 
@@ -82,22 +83,23 @@ var rootCmd = &cobra.Command{
 			}
 		}
 
-		for _, projectID := range strings.Split(os.Getenv("OS_PROJECT_ID"), ",") {
-			go func(id string) {
-				if !(useAppCreds) {
+		if !(useAppCreds) {
+			for _, projectID := range strings.Split(os.Getenv("OS_PROJECT_ID"), ",") {
+				go func(id string) {
 					exp, err := exporter.New(id, useAppCreds, os.Getenv("OS_USERNAME"), os.Getenv("OS_PASSWORD"))
 					if err != nil {
 						log.WithError(err).Fatal("Could not create exporter")
 					}
-					exporter.Run(interval, exp)
-				} else { //TODO: Use app creds here
-					exp, err := exporter.New(id, useAppCreds, os.Getenv("OS_APPLICATION_CREDENTIAL_ID"), os.Getenv("OS_APPLICATION_CREDENTIAL_SECRET"))
-					if err != nil {
-						log.WithError(err).Fatal("Could not create exporter")
-					}
-					exporter.Run(interval, exp)
-				}
-			}(projectID)
+					go exporter.Run(interval, exp)
+				}(projectID)
+			}
+		} else {
+			project, err := auth.GetProject(os.Getenv("OS_APPLICATION_CREDENTIAL_ID"), os.Getenv("OS_APPLICATION_CREDENTIAL_SECRET"))
+			exp, err := exporter.New(project.ID, useAppCreds, os.Getenv("OS_APPLICATION_CREDENTIAL_ID"), os.Getenv("OS_APPLICATION_CREDENTIAL_SECRET"))
+			if err != nil {
+				log.WithError(err).Fatal("Could not create exporter")
+			}
+			go exporter.Run(interval, exp)
 		}
 
 		router := chi.NewRouter()
