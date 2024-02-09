@@ -65,11 +65,7 @@ var rootCmd = &cobra.Command{
 
 		if os.Getenv("OS_APPLICATION_CREDENTIAL_ID") == "" || os.Getenv("OS_APPLICATION_CREDENTIAL_SECRET") == "" {
 			useAppCreds = false
-		} else {
-			useAppCreds = true
-		}
 
-		if !(useAppCreds) {
 			if os.Getenv("OS_USERNAME") == "" {
 				log.Fatalf("OS_USERNAME is missing. Or to use application credentials set OS_APPLICATION_CREDENTIAL_ID and OS_APPLICATION_CREDENTIAL_SECRET.")
 			}
@@ -81,9 +77,7 @@ var rootCmd = &cobra.Command{
 			if os.Getenv("OS_PROJECT_ID") == "" {
 				log.Fatalf("OS_PROJECT_ID is missing. Or to use application credentials set OS_APPLICATION_CREDENTIAL_ID and OS_APPLICATION_CREDENTIAL_SECRET.")
 			}
-		}
 
-		if !(useAppCreds) {
 			for _, projectID := range strings.Split(os.Getenv("OS_PROJECT_ID"), ",") {
 				go func(id string) {
 					exp, err := exporter.New(id, useAppCreds, os.Getenv("OS_USERNAME"), os.Getenv("OS_PASSWORD"))
@@ -94,6 +88,12 @@ var rootCmd = &cobra.Command{
 				}(projectID)
 			}
 		} else {
+			useAppCreds = true
+
+			if os.Getenv("OS_PROJECT_ID") != "" {
+				log.Fatalf("OS_PROJECT_ID is defined while using application credentials. Unset OS_PROJECT_ID to continue.")
+			}
+
 			project, err := auth.GetProject(os.Getenv("OS_APPLICATION_CREDENTIAL_ID"), os.Getenv("OS_APPLICATION_CREDENTIAL_SECRET"))
 			exp, err := exporter.New(project.ID, useAppCreds, os.Getenv("OS_APPLICATION_CREDENTIAL_ID"), os.Getenv("OS_APPLICATION_CREDENTIAL_SECRET"))
 			if err != nil {

@@ -41,7 +41,7 @@ and `https://api.cloud.syseleven.net:5001`)
 
   ```sh
   export OS_AUTH_URL="https://api.example.syseleven.de:5000"
-  export SYS11_EXPORTER_API_ENDPOINT="https://api.example.syseleven.de:5001"
+  export SYSELEVEN_QUOTA_API_ENDPOINT="https://api.example.syseleven.de:5001"
   ```
 
 Then run the exporter:

@@ -54,18 +54,13 @@ func Run(interval int64, exporter *Exporter) {
 		log.Infof("Scrape Quota and Usage Metrics")
 		if !(exporter.UseAppCreds) {
 			token, err = auth.GetToken(exporter.ProjectID, exporter.Username, exporter.Password)
-			if err != nil {
-				log.WithError(err).Error("Could not get API Token")
-				time.Sleep(60 * time.Second)
-				continue
-			}
 		} else {
 			token, err = auth.GetTokenAppCreds(exporter.ProjectID, exporter.Username, exporter.Password)
-			if err != nil {
-				log.WithError(err).Error("Could not get API Token")
-				time.Sleep(60 * time.Second)
-				continue
-			}
+		}
+		if err != nil {
+			log.WithError(err).Error("Could not get API Token")
+			time.Sleep(60 * time.Second)
+			continue
 		}
 
 		quota, err := api.GetQuota(exporter.ProjectID, token)

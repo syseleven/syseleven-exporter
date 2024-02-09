@@ -26,8 +26,16 @@ import (
 )
 
 func GetToken(projectID, username, password string) (string, error) {
+	//Check wether IdentityEndpoint is set via env config or standard needs to be used
+	var identityEndpoint string
+	if os.Getenv("OS_AUTH_URL") == "" {
+		identityEndpoint = "https://keystone.cloud.syseleven.net:5000/v3"
+	} else {
+		identityEndpoint = os.Getenv("OS_AUTH_URL")
+	}
+
 	opts := gophercloud.AuthOptions{
-		IdentityEndpoint: "https://keystone.cloud.syseleven.net:5000/v3",
+		IdentityEndpoint: identityEndpoint,
 		Username:         username,
 		Password:         password,
 		DomainName:       "Default",
