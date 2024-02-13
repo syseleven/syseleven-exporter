@@ -4,7 +4,7 @@ metadata:
   name: syseleven-exporter
   description: Export quota and current usage from the SysEleven API as Prometheus metrics.
   annotations:
-    github.com/project-slug: Staffbase/syseleven-exporter
+    github.com/project-slug: syseleven/syseleven-exporter
   tags:
     - go
     - monitoring

@@ -9,7 +9,7 @@ The SysEleven Exporter can be deployed using the [vfm/syseleven-exporter-chart](
 Clone the repository and build the binary:
 
 ```sh
-git clone git@github.com:Staffbase/syseleven-exporter.git
+git clone git@github.com:syseleven/syseleven-exporter.git
 make build
 ```
 
@@ -50,10 +50,10 @@ Then run the exporter:
 ./bin/syselevenexporter
 ```
 
-A Docker image is available at `staffbace/syseleven-exporter:<TAG>` and can be retrieved via:
+A Docker image is available at `syseleven/syseleven-exporter:<TAG>` and can be retrieved via:
 
 ```sh
-docker pull staffbace/syseleven-exporter:<TAG>
+docker pull syseleven/syseleven-exporter:<TAG>
 ```
 
 ## Metrics

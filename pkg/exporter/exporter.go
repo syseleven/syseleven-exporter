@@ -19,8 +19,8 @@ package exporter
 import (
 	"time"
 
-	"github.com/Staffbase/syseleven-exporter/pkg/api"
-	"github.com/Staffbase/syseleven-exporter/pkg/auth"
+	"github.com/syseleven/syseleven-exporter/pkg/api"
+	"github.com/syseleven/syseleven-exporter/pkg/auth"
 
 	"github.com/prometheus/client_golang/prometheus"
 	log "github.com/sirupsen/logrus"

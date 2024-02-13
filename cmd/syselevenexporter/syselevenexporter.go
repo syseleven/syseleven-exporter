@@ -23,9 +23,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/Staffbase/syseleven-exporter/pkg/auth"
-	"github.com/Staffbase/syseleven-exporter/pkg/exporter"
-	"github.com/Staffbase/syseleven-exporter/pkg/version"
+	"github.com/syseleven/syseleven-exporter/pkg/auth"
+	"github.com/syseleven/syseleven-exporter/pkg/exporter"
+	"github.com/syseleven/syseleven-exporter/pkg/version"
 
 	"github.com/go-chi/chi"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
