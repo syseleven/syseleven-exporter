@@ -1,5 +1,7 @@
 # SysEleven Exporter
 
+> This project is a fork of the original [syseleven-exporter](https://github.com/Staffbase/syseleven-exporter) created by [Staffbase](https://github.com/Staffbase/).
+
 Export your quota and current usage from the SysEleven API as Prometheus metrics. The exporter uses the `https://api.cloud.syseleven.net:5001` API endpoint to get the quota and usage statistics for all SysEleven resources.
 
 The SysEleven Exporter can be deployed using the [vfm/syseleven-exporter-chart](https://github.com/vfm/syseleven-exporter-chart/) Helm chart.
@@ -79,3 +81,7 @@ docker pull syseleven/syseleven-exporter:<TAG>
 | syseleven_volume_space_used_gigabytes | Number of used volume space per `region` and `project` in gigabytes |
 | syseleven_volume_volumes_total | Quota for number of volumes per `region` and `project` |
 | syseleven_volume_volumes_used | Number of used volumes per `region` and `project` |
+
+## Credits
+
+- [Staffbase](https://github.com/Staffbase/) - Original Author
