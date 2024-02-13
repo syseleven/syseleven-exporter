@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	github.com/go-chi/chi v4.0.2+incompatible
-	github.com/gophercloud/gophercloud v0.25.0
+	github.com/gophercloud/gophercloud v1.9.0
 	github.com/prometheus/client_golang v1.2.1
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v0.0.5
