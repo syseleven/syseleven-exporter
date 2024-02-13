@@ -27,95 +27,95 @@ var (
 	computeCoresTotal = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "compute_cores_total",
-	}, []string{REGION_LABEL, PROJECT_LABEL})
+	}, []string{"region", "project"})
 
 	computeCoresUsed = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "compute_cores_used",
-	}, []string{REGION_LABEL, PROJECT_LABEL})
+	}, []string{"region", "project"})
 
 	computeInstancesTotal = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "compute_instances_total",
-	}, []string{REGION_LABEL, PROJECT_LABEL})
+	}, []string{"region", "project"})
 
 	computeInstancesUsed = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "compute_instances_used",
-	}, []string{REGION_LABEL, PROJECT_LABEL})
+	}, []string{"region", "project"})
 
 	computeFlavorsUsed = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "compute_flavors_used",
-	}, []string{REGION_LABEL, PROJECT_LABEL, FLAVOR_LABEL})
+	}, []string{"region", "project", "flavor"})
 
 	computeRamTotalMegabytes = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "compute_ram_total_megabytes",
-	}, []string{REGION_LABEL, PROJECT_LABEL})
+	}, []string{"region", "project"})
 
 	computeRamUsedMegabytes = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "compute_ram_used_megabytes",
-	}, []string{REGION_LABEL, PROJECT_LABEL})
+	}, []string{"region", "project"})
 
 	dnsZonesTotal = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "dns_zones_total",
-	}, []string{REGION_LABEL, PROJECT_LABEL})
+	}, []string{"region", "project"})
 
 	dnsZonesUsed = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "dns_zones_used",
-	}, []string{REGION_LABEL, PROJECT_LABEL})
+	}, []string{"region", "project"})
 
 	networkFloatingIPsTotal = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "network_floating_ips_total",
-	}, []string{REGION_LABEL, PROJECT_LABEL})
+	}, []string{"region", "project"})
 
 	networkFloatingIPsUsed = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "network_floating_ips_used",
-	}, []string{REGION_LABEL, PROJECT_LABEL})
+	}, []string{"region", "project"})
 
 	networkLoadbalancersTotal = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "network_loadbalancers_total",
-	}, []string{REGION_LABEL, PROJECT_LABEL})
+	}, []string{"region", "project"})
 
 	networkLoadbalancersUsed = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "network_loadbalancers_used",
-	}, []string{REGION_LABEL, PROJECT_LABEL})
+	}, []string{"region", "project"})
 
 	s3SpaceTotalBytes = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "s3_space_total_bytes",
-	}, []string{REGION_LABEL, PROJECT_LABEL})
+	}, []string{"region", "project"})
 
 	s3SpaceUsedBytes = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "s3_space_used_bytes",
-	}, []string{REGION_LABEL, PROJECT_LABEL})
+	}, []string{"region", "project"})
 
 	volumeSpaceTotalGigabytes = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "volume_space_total_gigabytes",
-	}, []string{REGION_LABEL, PROJECT_LABEL})
+	}, []string{"region", "project"})
 
 	volumeSpaceUsedGigabytes = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "volume_space_used_gigabytes",
-	}, []string{REGION_LABEL, PROJECT_LABEL})
+	}, []string{"region", "project"})
 
 	volumeVolumesTotalGigabytes = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "volume_volumes_total",
-	}, []string{REGION_LABEL, PROJECT_LABEL})
+	}, []string{"region", "project"})
 
 	volumeVolumesUsedGigabytes = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "volume_volumes_used",
-	}, []string{REGION_LABEL, PROJECT_LABEL})
+	}, []string{"region", "project"})
 )
