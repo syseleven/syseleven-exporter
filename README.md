@@ -13,14 +13,36 @@ git clone git@github.com:Staffbase/syseleven-exporter.git
 make build
 ```
 
-Set the environment variables for authentication against the SysEleven API:
+Set the environment variables for authentication against the SysEleven API.
+There are two authentication options available:
 
-```sh
-export OS_USERNAME=
-export OS_PASSWORD=
-# OS_PROJECT_ID could be a comma separated list of project IDs
-export OS_PROJECT_ID=
-```
+- Username and password
+
+  ```sh
+  export OS_USERNAME=
+  export OS_PASSWORD=
+  # OS_PROJECT_ID could be a comma separated list of project IDs
+  export OS_PROJECT_ID=
+  ```
+
+- Application credentials (do **not** set `OS_PROJECT_ID`)
+
+  ```sh
+  export OS_APPLICATION_CREDENTIAL_ID=
+  export OS_APPLICATION_CREDENTIAL_SECRET=
+  ```
+
+  *Note that when using application credentials you cannot specify `OS_PROJECT_ID`.*
+  *Else the authentication won't work. Also this means that you can only scrape metrics for one project.*
+  *This will be the project the application credentials are created in and scoped to.*
+
+- Optional: Configure API endpoints for non standard (not `https://keystone.cloud.syseleven.net:5000/v3`
+and `https://api.cloud.syseleven.net:5001`)
+
+  ```sh
+  export OS_AUTH_URL="https://api.example.syseleven.de:5000"
+  export SYSELEVEN_QUOTA_API_ENDPOINT="https://api.example.syseleven.de:5001"
+  ```
 
 Then run the exporter:
 

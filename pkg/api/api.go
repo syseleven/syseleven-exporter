@@ -20,6 +20,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 )
 
 type Error struct {
@@ -28,9 +29,15 @@ type Error struct {
 	Type   string `json:"type"`
 }
 
-const endpoint = "https://api.cloud.syseleven.net:5001"
+var endpoint string
 
 func GetQuota(projectID, token string) (map[string]Quota, error) {
+	if os.Getenv("SYSELEVEN_QUOTA_API_ENDPOINT") == "" {
+		endpoint = "https://api.cloud.syseleven.net:5001"
+	} else {
+		endpoint = os.Getenv("SYSELEVEN_QUOTA_API_ENDPOINT")
+	}
+
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/v1/projects/%s/quota", endpoint, projectID), nil)
 	if err != nil {
 		return nil, err

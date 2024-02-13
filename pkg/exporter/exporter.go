@@ -27,24 +27,32 @@ import (
 )
 
 type Exporter struct {
-	Username  string
-	Password  string
-	ProjectID string
+	Username    string
+	Password    string
+	ProjectID   string
+	UseAppCreds bool
 }
 
-func New(projectID, username, password string) (*Exporter, error) {
+func New(projectID string, useAppCreds bool, username string, password string) (*Exporter, error) {
 	return &Exporter{
-		ProjectID: projectID,
-		Username:  username,
-		Password:  password,
+		ProjectID:   projectID,
+		UseAppCreds: useAppCreds,
+		Username:    username,
+		Password:    password,
 	}, nil
 }
 
 func Run(interval int64, exporter *Exporter) {
 	for {
-		log.Infof("Scrape Quota and Usage Metrics")
+		var token string
+		var err error
 
-		token, err := auth.GetToken(exporter.ProjectID, exporter.Username, exporter.Password)
+		log.Infof("Scrape Quota and Usage Metrics")
+		if !(exporter.UseAppCreds) {
+			token, err = auth.GetToken(exporter.ProjectID, exporter.Username, exporter.Password)
+		} else {
+			token, err = auth.GetTokenAppCreds(exporter.ProjectID, exporter.Username, exporter.Password)
+		}
 		if err != nil {
 			log.WithError(err).Error("Could not get API Token")
 			time.Sleep(60 * time.Second)

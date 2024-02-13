@@ -17,13 +17,25 @@ limitations under the License.
 package auth
 
 import (
+	"errors"
+	"os"
+
 	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/gophercloud/openstack"
+	"github.com/gophercloud/gophercloud/openstack/identity/v3/tokens"
 )
 
 func GetToken(projectID, username, password string) (string, error) {
+	//Check wether IdentityEndpoint is set via env config or standard needs to be used
+	var identityEndpoint string
+	if os.Getenv("OS_AUTH_URL") == "" {
+		identityEndpoint = "https://keystone.cloud.syseleven.net:5000/v3"
+	} else {
+		identityEndpoint = os.Getenv("OS_AUTH_URL")
+	}
+
 	opts := gophercloud.AuthOptions{
-		IdentityEndpoint: "https://keystone.cloud.syseleven.net:5000/v3",
+		IdentityEndpoint: identityEndpoint,
 		Username:         username,
 		Password:         password,
 		DomainName:       "Default",
@@ -36,4 +48,60 @@ func GetToken(projectID, username, password string) (string, error) {
 	}
 
 	return provider.Token(), nil
+}
+
+func GetTokenAppCreds(projectID, applicationCredentialID, applicationCredentialSecret string) (string, error) {
+	//Check wether IdentityEndpoint is set via env config or standard needs to be used
+	var identityEndpoint string
+	if os.Getenv("OS_AUTH_URL") == "" {
+		identityEndpoint = "https://keystone.cloud.syseleven.net:5000/v3"
+	} else {
+		identityEndpoint = os.Getenv("OS_AUTH_URL")
+	}
+
+	opts := gophercloud.AuthOptions{
+		IdentityEndpoint:            identityEndpoint,
+		ApplicationCredentialID:     applicationCredentialID,
+		ApplicationCredentialSecret: applicationCredentialSecret,
+		DomainName:                  "Default",
+	}
+
+	provider, err := openstack.AuthenticatedClient(opts)
+	if err != nil {
+		return "", err
+	}
+
+	return provider.Token(), nil
+}
+
+func GetProject(applicationCredentialID, applicationCredentialSecret string) (*tokens.Project, error) {
+	//Check wether IdentityEndpoint is set via env config or standard needs to be used
+	var identityEndpoint string
+	if os.Getenv("OS_AUTH_URL") == "" {
+		identityEndpoint = "https://keystone.cloud.syseleven.net:5000/v3"
+	} else {
+		identityEndpoint = os.Getenv("OS_AUTH_URL")
+	}
+
+	opts := gophercloud.AuthOptions{
+		IdentityEndpoint:            identityEndpoint,
+		ApplicationCredentialID:     applicationCredentialID,
+		ApplicationCredentialSecret: applicationCredentialSecret,
+		DomainName:                  "Default",
+	}
+
+	provider, err := openstack.AuthenticatedClient(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	r := provider.GetAuthResult()
+	if r == nil {
+		//ProviderClient did not use openstack.Authenticate(), e.g. because token
+		//was set manually with ProviderClient.SetToken()
+		return nil, errors.New("no AuthResult available")
+	}
+
+	result := r.(tokens.CreateResult)
+	return result.ExtractProject()
 }
