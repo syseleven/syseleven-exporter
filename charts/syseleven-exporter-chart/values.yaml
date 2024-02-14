@@ -74,3 +74,6 @@ openstack:
   projectId: ""
   username: ""
   password: ""
+  # or
+  application_credential_id: ""
+  application_credential_secret: ""
