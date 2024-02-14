@@ -1,6 +1,6 @@
 apiVersion: v2
 name: syseleven-exporter
-description: A Helm Chart to deploy the greate SysEleven Exporter in Kubernetes.
+description: A Helm Chart to deploy the SysEleven Exporter in Kubernetes.
 
 # A chart can be either an 'application' or a 'library' chart.
 #

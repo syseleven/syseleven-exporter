@@ -4,21 +4,21 @@
 ![Badge](https://img.shields.io/badge/made%20with%20%E2%9D%A4%20by-vfm-002C5B)
 
 
-A Helm Chart to deploy the greate [SysEleven Exporter](https://github.com/Staffbase/syseleven-exporter) in Kubernetes.
+A Helm Chart to deploy the [SysEleven Exporter](https://github.com/syseleven/syseleven-exporter) in Kubernetes.
 
 ## Usage
 
 Add this Github-Repository as Helm Repository.
 
 ```bash
-helm repo add syseleven-exporter-repo https://vfm.github.io/syseleven-exporter-chart
+helm repo add syseleven-exporter https://syseleven.github.io/syseleven-exporter-chart
 helm repo update
 ```
 
 Now you can install the Chart.
 
 ```bash
-helm install syseleven-exporter-repo/syseleven-exporter --generate-name
+helm install syseleven-exporter/syseleven-exporter --generate-name
 ```
 
 Add your Openstack credentials to allow *read-only* access to the API-Endpoint `https://api.cloud.syseleven.net:5001`
@@ -35,7 +35,7 @@ If you want an [Prometheus ServiceMonitor](https://github.com/prometheus-operato
 
 ```bash
 prometheus.serviceMonitor.enabled
-prometheus.serviceMonitor.interval 
+prometheus.serviceMonitor.interval
 ```
 
 The default Namespace for the ServiceMonitor is the Helm Release Namespace.
