@@ -83,7 +83,7 @@
                         "exemplar": true,
                         "expr": "sum((syseleven_compute_cores_used / syseleven_compute_cores_total) * 100) by(region, project)",
                         "interval": "",
-                        "legendFormat": "{{region}}",
+                        "legendFormat": "{{region}} | {{project}}",
                         "refId": "A"
                     }],
                     "title": "SysEleven - Compute Cores",
@@ -143,7 +143,7 @@
                         "expr": "sum(syseleven_compute_cores_used) by(region, project) ",
                         "interval": "",
                         "intervalFactor": 1,
-                        "legendFormat": "{{region}} ",
+                        "legendFormat": "{{region}} | {{project}} ",
                         "refId": "A"
                     }],
                     "thresholds": [],
@@ -240,7 +240,7 @@
                         "expr": "sum(syseleven_compute_cores_total) by(region, project) ",
                         "interval": "",
                         "intervalFactor": 1,
-                        "legendFormat": "{{region}} ",
+                        "legendFormat": "{{region}} | {{project}} ",
                         "refId": "A"
                     }],
                     "thresholds": [],
@@ -354,7 +354,7 @@
                         "exemplar": true,
                         "expr": "sum((syseleven_compute_ram_used_megabytes / syseleven_compute_ram_total_megabytes) * 100) by(region, project)",
                         "interval": "",
-                        "legendFormat": "{{region}}",
+                        "legendFormat": "{{region}} | {{project}}",
                         "refId": "A"
                     }],
                     "title": "SysEleven - Compute Ram",
@@ -414,7 +414,7 @@
                         "expr": "sum(syseleven_compute_ram_used_megabytes ) by(region, project) ",
                         "interval": "",
                         "intervalFactor": 1,
-                        "legendFormat": "{{region}} ",
+                        "legendFormat": "{{region}} | {{project}} ",
                         "refId": "A"
                     }],
                     "thresholds": [],
@@ -511,7 +511,7 @@
                         "expr": "sum(syseleven_compute_ram_total_megabytes) by(region, project) ",
                         "interval": "",
                         "intervalFactor": 1,
-                        "legendFormat": "{{region}} ",
+                        "legendFormat": "{{region}} | {{project}} ",
                         "refId": "A"
                     }],
                     "thresholds": [],
@@ -629,7 +629,7 @@
                 "exemplar": true,
                 "expr": "sum((syseleven_s3_space_used_bytes / syseleven_s3_space_total_bytes) * 100) by(region, project)",
                 "interval": "",
-                "legendFormat": "{{region}}",
+                "legendFormat": "{{region}} | {{project}}",
                 "refId": "A"
             }],
             "title": "SysEleven - S3 Space",
@@ -689,7 +689,7 @@
                 "expr": "sum(syseleven_s3_space_used_bytes) by(region, project) ",
                 "interval": "",
                 "intervalFactor": 1,
-                "legendFormat": "{{region}} ",
+                "legendFormat": "{{region}} | {{project}} ",
                 "refId": "A"
             }],
             "thresholds": [],
@@ -786,7 +786,7 @@
                 "expr": "sum(syseleven_s3_space_total_bytes) by(region, project) ",
                 "interval": "",
                 "intervalFactor": 1,
-                "legendFormat": "{{region}} ",
+                "legendFormat": "{{region}} | {{project}} ",
                 "refId": "A"
             }],
             "thresholds": [],
@@ -896,7 +896,7 @@
                         "exemplar": true,
                         "expr": "sum((syseleven_volume_space_used_gigabytes / syseleven_volume_space_total_gigabytes) * 100) by(region, project)",
                         "interval": "",
-                        "legendFormat": "{{region}}",
+                        "legendFormat": "{{region}} | {{project}}",
                         "refId": "A"
                     }],
                     "title": "SysEleven - Volume Space",
@@ -956,7 +956,7 @@
                         "expr": "sum(syseleven_volume_space_used_gigabytes ) by(region, project) ",
                         "interval": "",
                         "intervalFactor": 1,
-                        "legendFormat": "{{region}} ",
+                        "legendFormat": "{{region}} | {{project}} ",
                         "refId": "A"
                     }],
                     "thresholds": [],
@@ -1053,7 +1053,7 @@
                         "expr": "sum(syseleven_volume_space_total_gigabytes) by(region, project) ",
                         "interval": "",
                         "intervalFactor": 1,
-                        "legendFormat": "{{region}} ",
+                        "legendFormat": "{{region}} | {{project}} ",
                         "refId": "A"
                     }],
                     "thresholds": [],
@@ -1167,7 +1167,7 @@
                         "exemplar": true,
                         "expr": "sum((syseleven_volume_volumes_used / syseleven_volume_volumes_total) * 100) by(region, project)",
                         "interval": "",
-                        "legendFormat": "{{region}}",
+                        "legendFormat": "{{region}} | {{project}}",
                         "refId": "A"
                     }],
                     "title": "SysEleven - Volume Volumes",
@@ -1227,7 +1227,7 @@
                         "expr": "sum(syseleven_volume_volumes_used) by(region, project) ",
                         "interval": "",
                         "intervalFactor": 1,
-                        "legendFormat": "{{region}} ",
+                        "legendFormat": "{{region}} | {{project}} ",
                         "refId": "A"
                     }],
                     "thresholds": [],
@@ -1324,7 +1324,7 @@
                         "expr": "sum(syseleven_volume_volumes_total) by(region, project) ",
                         "interval": "",
                         "intervalFactor": 1,
-                        "legendFormat": "{{region}} ",
+                        "legendFormat": "{{region}} | {{project}} ",
                         "refId": "A"
                     }],
                     "thresholds": [],
@@ -1438,7 +1438,7 @@
                         "exemplar": true,
                         "expr": "sum((syseleven_compute_instances_used / syseleven_compute_instances_total) * 100) by(region, project)",
                         "interval": "",
-                        "legendFormat": "{{region}}",
+                        "legendFormat": "{{region}} | {{project}}",
                         "refId": "A"
                     }],
                     "title": "SysEleven - Compute Instances",
@@ -1498,7 +1498,7 @@
                         "expr": "sum(syseleven_compute_instances_used ) by(region, project) ",
                         "interval": "",
                         "intervalFactor": 1,
-                        "legendFormat": "{{region}} ",
+                        "legendFormat": "{{region}} | {{project}} ",
                         "refId": "A"
                     }],
                     "thresholds": [],
@@ -1595,7 +1595,7 @@
                         "expr": "sum(syseleven_compute_instances_total) by(region, project) ",
                         "interval": "",
                         "intervalFactor": 1,
-                        "legendFormat": "{{region}} ",
+                        "legendFormat": "{{region}} | {{project}} ",
                         "refId": "A"
                     }],
                     "thresholds": [],
@@ -1708,7 +1708,7 @@
                         "exemplar": true,
                         "expr": "sum((syseleven_network_loadbalancers_used / syseleven_network_loadbalancers_total) * 100) by(region, project)",
                         "interval": "",
-                        "legendFormat": "{{region}}",
+                        "legendFormat": "{{region}} | {{project}}",
                         "refId": "A"
                     }],
                     "title": "SysEleven - Network LoadBalancers",
@@ -1768,7 +1768,7 @@
                         "expr": "sum(syseleven_network_loadbalancers_used ) by(region, project) ",
                         "interval": "",
                         "intervalFactor": 1,
-                        "legendFormat": "{{region}} ",
+                        "legendFormat": "{{region}} | {{project}} ",
                         "refId": "A"
                     }],
                     "thresholds": [],
@@ -1865,7 +1865,7 @@
                         "expr": "sum(syseleven_network_loadbalancers_total) by(region, project) ",
                         "interval": "",
                         "intervalFactor": 1,
-                        "legendFormat": "{{region}} ",
+                        "legendFormat": "{{region}} | {{project}} ",
                         "refId": "A"
                     }],
                     "thresholds": [],
@@ -1979,7 +1979,7 @@
                         "exemplar": true,
                         "expr": "sum((syseleven_network_floating_ips_used / syseleven_network_floating_ips_total) * 100) by(region, project)",
                         "interval": "",
-                        "legendFormat": "{{region}}",
+                        "legendFormat": "{{region}} | {{project}}",
                         "refId": "A"
                     }],
                     "title": "SysEleven - Network Floating IPs",
@@ -2039,7 +2039,7 @@
                         "expr": "sum(syseleven_network_floating_ips_used ) by(region, project) ",
                         "interval": "",
                         "intervalFactor": 1,
-                        "legendFormat": "{{region}} ",
+                        "legendFormat": "{{region}} | {{project}} ",
                         "refId": "A"
                     }],
                     "thresholds": [],
@@ -2136,7 +2136,7 @@
                         "expr": "sum(syseleven_network_floating_ips_total) by(region, project) ",
                         "interval": "",
                         "intervalFactor": 1,
-                        "legendFormat": "{{region}} ",
+                        "legendFormat": "{{region}} | {{project}} ",
                         "refId": "A"
                     }],
                     "thresholds": [],
@@ -2250,7 +2250,7 @@
                         "exemplar": true,
                         "expr": "sum((syseleven_dns_zones_used / syseleven_dns_zones_total) * 100) by(region, project)",
                         "interval": "",
-                        "legendFormat": "{{region}}",
+                        "legendFormat": "{{region}} | {{project}}",
                         "refId": "A"
                     }],
                     "title": "SysEleven - DNS Zones",
@@ -2310,7 +2310,7 @@
                         "expr": "sum(syseleven_dns_zones_used ) by(region, project) ",
                         "interval": "",
                         "intervalFactor": 1,
-                        "legendFormat": "{{region}} ",
+                        "legendFormat": "{{region}} | {{project}} ",
                         "refId": "A"
                     }],
                     "thresholds": [],
@@ -2407,7 +2407,7 @@
                         "expr": "sum(syseleven_dns_zones_total) by(region, project) ",
                         "interval": "",
                         "intervalFactor": 1,
-                        "legendFormat": "{{region}} ",
+                        "legendFormat": "{{region}} | {{project}} ",
                         "refId": "A"
                     }],
                     "thresholds": [],
@@ -2484,5 +2484,5 @@
     "timezone": "",
     "title": "SysEleven - Quotas",
     "uid": "ezkVYBqMz",
-    "version": 4
+    "version": 5
 }
