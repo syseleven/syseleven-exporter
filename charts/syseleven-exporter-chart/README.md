@@ -31,7 +31,7 @@ openstack.projectId
 
 ### Prometheus
 
-If you want an [Prometheus ServiceMonitor](https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/api.md#servicemonitor) you can use the `prometheus.serviceMonitor.enabled` flag, which is false by default. The default `serviceMonitor.interval` is 10 minutes, since the API is only polled once per hour by the exporter pod.
+If you want a [Prometheus ServiceMonitor](https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/api.md#servicemonitor) you can use the `prometheus.serviceMonitor.enabled` flag, which is false by default. The default `serviceMonitor.interval` is 10 minutes, since the API is only polled once per hour by the exporter pod.
 
 ```bash
 prometheus.serviceMonitor.enabled
@@ -39,7 +39,7 @@ prometheus.serviceMonitor.interval
 ```
 
 The default Namespace for the ServiceMonitor is the Helm Release Namespace.
-If you need the ServiceMonitor in an other namespace, you have to specify the `prometheus.serviceMonitor.namespace`.
+If you need the ServiceMonitor in another namespace, you have to specify the `prometheus.serviceMonitor.namespace`.
 
 ```bash
 prometheus.serviceMonitor.namespace
@@ -47,13 +47,13 @@ prometheus.serviceMonitor.namespace
 
 #### Rules
 
-To use a default set of Prometheus Alertrules, you have to enable the `prometheus.rules.enabled` flag. Simliar to the ServiceMonitor, you can adjust the default Namespace with `prometheus.rules.namespace`.
+To use a default set of Prometheus Alertrules, you have to enable the `prometheus.rules.enabled` flag. Similar to the ServiceMonitor, you can adjust the default Namespace with `prometheus.rules.namespace`.
 
-To see the full list of all options look at [Values.yaml](charts/syseleven-exporter-chart/values.yaml).
+To see the full list of all options have a look at [Values.yaml](charts/syseleven-exporter-chart/values.yaml).
 
 
 #### Dashboard
 
-To use a default Grafana Dashboard, you have to enable the `prometheus.dashboards.enabled` flag. Simliar to the Rules, you can adjust the Namespace with `prometheus.dashboards.namespace`.
+To use a default Grafana Dashboard, you have to enable the `prometheus.dashboards.enabled` flag. Similar to the Rules, you can adjust the Namespace with `prometheus.dashboards.namespace`.
 
-To see the full list of all options look at [Values.yaml](charts/syseleven-exporter-chart/values.yaml).
+To see the full list of all options have a look at [Values.yaml](charts/syseleven-exporter-chart/values.yaml).
