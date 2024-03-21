@@ -85,3 +85,4 @@ docker pull syseleven/syseleven-exporter:<TAG>
 ## Credits
 
 - [Staffbase](https://github.com/Staffbase/) - Original Author
+- [vfm](https://github.com/vfm) - Original Author of the Helm chart
