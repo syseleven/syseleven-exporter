@@ -11,7 +11,7 @@ A Helm Chart to deploy the [SysEleven Exporter](https://github.com/syseleven/sys
 Add this Github-Repository as Helm Repository.
 
 ```bash
-helm repo add syseleven-exporter https://syseleven.github.io/syseleven-exporter-chart
+helm repo add syseleven-exporter https://syseleven.github.io/syseleven-exporter
 helm repo update
 ```
 
