@@ -30,5 +30,6 @@ jobs:
         uses: helm/chart-releaser-action@v1.6.0
         with:
           config: .cr.yaml
+          mark_as_latest: false # We want the actual software tag to be latest
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
