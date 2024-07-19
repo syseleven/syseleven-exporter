@@ -3,7 +3,7 @@ module github.com/syseleven/syseleven-exporter
 go 1.21
 
 require (
-	github.com/go-chi/chi v1.5.5
+	github.com/go-chi/chi/v5 v5.1.0
 	github.com/go-chi/chi/v5 v5.1.0
 	github.com/gophercloud/gophercloud v1.13.0
 	github.com/prometheus/client_golang v1.19.1
