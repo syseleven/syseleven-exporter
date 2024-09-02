@@ -52,6 +52,14 @@ Then run the exporter:
 ./bin/syselevenexporter
 ```
 
+The exporter uses the API version v1 by default. If you want to change to the current API version v3, you can run the exporter with:
+
+```sh
+./bin/syselevenexporter  --api-version v3
+```
+
+See here for more information about the [API for Quota and Usage Information](https://docs.syseleven.de/syseleven-stack/en/reference/get-quota-info).
+
 A Docker image is available at `syseleven/syseleven-exporter:<TAG>` and can be retrieved via:
 
 ```sh
@@ -75,7 +83,7 @@ docker pull syseleven/syseleven-exporter:<TAG>
 | syseleven_network_floating_ips_used | Number of used floating IPs per `region` and `project` |
 | syseleven_network_loadbalancers_total | Quota for number of load balancers per `region` and `project` |
 | syseleven_network_loadbalancers_used | Number of used load balancers per `region` and `project` |
-| syseleven_s3_space_total_bytes | Quota for S3 space per `region` and `project` in bytes |
+| syseleven_s3_space_total_bytes | Quota for S3 space per `region`, `project` and `type` in bytes |
 | syseleven_s3_space_used_bytes | Used S3 space per `region` and `project` in bytes |
 | syseleven_volume_space_total_gigabytes | Quota for volume space per `region` and `project` in gigabytes |
 | syseleven_volume_space_used_gigabytes | Number of used volume space per `region` and `project` in gigabytes |

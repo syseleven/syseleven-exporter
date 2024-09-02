@@ -77,3 +77,4 @@ openstack:
   # or
   application_credential_id: ""
   application_credential_secret: ""
+  apiversion: v1

@@ -42,7 +42,120 @@ func New(projectID string, useAppCreds bool, username string, password string) (
 	}, nil
 }
 
-func Run(interval int64, exporter *Exporter) {
+// set utils for API v3 for Quota and Usage Information
+
+func SetUtilsV3(quota map[string]api.QuotaV3, usage map[string]api.CurrentUsageV3, exporter *Exporter) {
+	computeCoresTotal.Reset()
+	computeInstancesTotal.Reset()
+	computeRamTotalMegabytes.Reset()
+	dnsZonesTotal.Reset()
+	networkFloatingIPsTotal.Reset()
+	networkLoadbalancersTotal.Reset()
+	s3SpaceTotalBytes.Reset()
+	volumeSpaceTotalGigabytes.Reset()
+	volumeVolumesTotalGigabytes.Reset()
+	computeCoresUsed.Reset()
+	computeInstancesUsed.Reset()
+	computeRamUsedMegabytes.Reset()
+	dnsZonesUsed.Reset()
+	networkFloatingIPsUsed.Reset()
+	networkLoadbalancersUsed.Reset()
+	s3SpaceUsedBytes.Reset()
+	volumeSpaceUsedGigabytes.Reset()
+	volumeVolumesUsedGigabytes.Reset()
+	computeFlavorsUsed.Reset()
+
+	for k, v := range quota {
+		computeCoresTotal.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.ComputeCores)
+		computeInstancesTotal.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.ComputeInstances)
+		computeRamTotalMegabytes.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.ComputeRAMMb)
+		dnsZonesTotal.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.DNSZones)
+		networkFloatingIPsTotal.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.NetworkFloatingips)
+		networkLoadbalancersTotal.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.LoadbalancerLoadbalancers)
+		volumeSpaceTotalGigabytes.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.VolumeSpaceGb)
+		volumeVolumesTotalGigabytes.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.VolumeVolumes)
+
+		for _, os := range v.Objectstorage {
+			s3SpaceTotalBytes.With(prometheus.Labels{"region": k, "project": exporter.ProjectID, "type": os.Type}).Set(os.SpaceBytes)
+		}
+
+	}
+
+	for k, v := range usage {
+		computeCoresUsed.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.ComputeCores)
+		computeInstancesUsed.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.ComputeInstances)
+		computeRamUsedMegabytes.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.ComputeRAMMb)
+		dnsZonesUsed.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.DNSZones)
+		networkFloatingIPsUsed.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.NetworkFloatingips)
+		networkLoadbalancersUsed.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.LoadbalancerLoadbalancers)
+		volumeSpaceUsedGigabytes.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.VolumeSpaceGb)
+		volumeVolumesUsedGigabytes.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.VolumeVolumes)
+
+		for flavor := range v.ComputeFlavors {
+			computeFlavorsUsed.With(prometheus.Labels{"region": k, "project": exporter.ProjectID, "flavor": flavor}).Set(v.ComputeFlavors[flavor])
+		}
+
+		for _, os := range v.Objectstorage {
+			s3SpaceUsedBytes.With(prometheus.Labels{"region": k, "project": exporter.ProjectID, "type": os.Type}).Set(os.SpaceBytes)
+		}
+	}
+
+
+}
+
+// set utils for API v1 for Quota and Usage Information
+
+func SetUtilsV1(quota map[string]api.QuotaV1, usage map[string]api.CurrentUsageV1, exporter *Exporter) {
+	computeCoresTotal.Reset()
+	computeInstancesTotal.Reset()
+	computeRamTotalMegabytes.Reset()
+	dnsZonesTotal.Reset()
+	networkFloatingIPsTotal.Reset()
+	networkLoadbalancersTotal.Reset()
+	s3SpaceTotalBytes.Reset()
+	volumeSpaceTotalGigabytes.Reset()
+	volumeVolumesTotalGigabytes.Reset()
+	computeCoresUsed.Reset()
+	computeInstancesUsed.Reset()
+	computeRamUsedMegabytes.Reset()
+	dnsZonesUsed.Reset()
+	networkFloatingIPsUsed.Reset()
+	networkLoadbalancersUsed.Reset()
+	s3SpaceUsedBytes.Reset()
+	volumeSpaceUsedGigabytes.Reset()
+	volumeVolumesUsedGigabytes.Reset()
+	computeFlavorsUsed.Reset()
+
+	for k, v := range quota {
+		computeCoresTotal.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.ComputeCores)
+		computeInstancesTotal.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.ComputeInstances)
+		computeRamTotalMegabytes.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.ComputeRAMMb)
+		dnsZonesTotal.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.DNSZones)
+		networkFloatingIPsTotal.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.NetworkFloatingips)
+		networkLoadbalancersTotal.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.NetworkLoadbalancers)
+		s3SpaceTotalBytes.With(prometheus.Labels{"region": k, "project": exporter.ProjectID, "type": "quobyte"}).Set(v.S3SpaceBytes)
+		volumeSpaceTotalGigabytes.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.VolumeSpaceGb)
+		volumeVolumesTotalGigabytes.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.VolumeVolumes)
+	}
+
+	for k, v := range usage {
+		computeCoresUsed.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.ComputeCores)
+		computeInstancesUsed.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.ComputeInstances)
+		computeRamUsedMegabytes.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.ComputeRAMMb)
+		dnsZonesUsed.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.DNSZones)
+		networkFloatingIPsUsed.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.NetworkFloatingips)
+		networkLoadbalancersUsed.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.NetworkLoadbalancers)
+		s3SpaceUsedBytes.With(prometheus.Labels{"region": k, "project": exporter.ProjectID, "type": "quobyte"}).Set(v.S3SpaceBytes)
+		volumeSpaceUsedGigabytes.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.VolumeSpaceGb)
+		volumeVolumesUsedGigabytes.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.VolumeVolumes)
+
+		for flavor := range v.ComputeFlavors {
+			computeFlavorsUsed.With(prometheus.Labels{"region": k, "project": exporter.ProjectID, "flavor": flavor}).Set(v.ComputeFlavors[flavor])
+		}
+	}
+}
+
+func Run(interval int64, apiVersion string, exporter *Exporter) {
 	for {
 		var token string
 		var err error
@@ -59,66 +172,40 @@ func Run(interval int64, exporter *Exporter) {
 			continue
 		}
 
-		quota, err := api.GetQuota(exporter.ProjectID, token)
-		if err != nil {
-			log.WithError(err).Error("Could not get quota")
-			time.Sleep(60 * time.Second)
-			continue
-		}
-
-		usage, err := api.GetCurrentUsage(exporter.ProjectID, token)
-		if err != nil {
-			log.WithError(err).Error("Could not get current usage")
-			time.Sleep(60 * time.Second)
-			continue
-		}
-
-		computeCoresTotal.Reset()
-		computeInstancesTotal.Reset()
-		computeRamTotalMegabytes.Reset()
-		dnsZonesTotal.Reset()
-		networkFloatingIPsTotal.Reset()
-		networkLoadbalancersTotal.Reset()
-		s3SpaceTotalBytes.Reset()
-		volumeSpaceTotalGigabytes.Reset()
-		volumeVolumesTotalGigabytes.Reset()
-		computeCoresUsed.Reset()
-		computeInstancesUsed.Reset()
-		computeRamUsedMegabytes.Reset()
-		dnsZonesUsed.Reset()
-		networkFloatingIPsUsed.Reset()
-		networkLoadbalancersUsed.Reset()
-		s3SpaceUsedBytes.Reset()
-		volumeSpaceUsedGigabytes.Reset()
-		volumeVolumesUsedGigabytes.Reset()
-		computeFlavorsUsed.Reset()
-
-		for k, v := range quota {
-			computeCoresTotal.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.ComputeCores)
-			computeInstancesTotal.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.ComputeInstances)
-			computeRamTotalMegabytes.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.ComputeRAMMb)
-			dnsZonesTotal.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.DNSZones)
-			networkFloatingIPsTotal.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.NetworkFloatingips)
-			networkLoadbalancersTotal.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.NetworkLoadbalancers)
-			s3SpaceTotalBytes.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.S3SpaceBytes)
-			volumeSpaceTotalGigabytes.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.VolumeSpaceGb)
-			volumeVolumesTotalGigabytes.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.VolumeVolumes)
-		}
-
-		for k, v := range usage {
-			computeCoresUsed.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.ComputeCores)
-			computeInstancesUsed.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.ComputeInstances)
-			computeRamUsedMegabytes.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.ComputeRAMMb)
-			dnsZonesUsed.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.DNSZones)
-			networkFloatingIPsUsed.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.NetworkFloatingips)
-			networkLoadbalancersUsed.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.NetworkLoadbalancers)
-			s3SpaceUsedBytes.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.S3SpaceBytes)
-			volumeSpaceUsedGigabytes.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.VolumeSpaceGb)
-			volumeVolumesUsedGigabytes.With(prometheus.Labels{"region": k, "project": exporter.ProjectID}).Set(v.VolumeVolumes)
-
-			for flavor := range v.ComputeFlavors {
-				computeFlavorsUsed.With(prometheus.Labels{"region": k, "project": exporter.ProjectID, "flavor": flavor}).Set(v.ComputeFlavors[flavor])
+		switch {
+		case apiVersion == "v3":
+			quota, err := api.GetQuotaV3(exporter.ProjectID, token)
+			if err != nil {
+				log.WithError(err).Error("Could not get quota")
+				time.Sleep(60 * time.Second)
+				continue
 			}
+
+			usage, err := api.GetCurrentUsageV3(exporter.ProjectID, token)
+			if err != nil {
+				log.WithError(err).Error("Could not get current usage")
+				time.Sleep(60 * time.Second)
+				continue
+			}
+
+			SetUtilsV3(quota, usage, exporter)
+
+		default:
+			quota, err := api.GetQuotaV1(exporter.ProjectID, token)
+			if err != nil {
+				log.WithError(err).Error("Could not get quota")
+				time.Sleep(60 * time.Second)
+				continue
+			}
+
+			usage, err := api.GetCurrentUsageV1(exporter.ProjectID, token)
+			if err != nil {
+				log.WithError(err).Error("Could not get current usage")
+				time.Sleep(60 * time.Second)
+				continue
+			}
+
+			SetUtilsV1(quota, usage, exporter)
 		}
 
 		time.Sleep(time.Duration(interval) * time.Second)
