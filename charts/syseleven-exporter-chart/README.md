@@ -29,6 +29,8 @@ openstack.password
 openstack.projectId
 ```
 
+The exporter uses the API version v1 by default. If you want to change to the current API version v3, you can adjust the API version with `openstack.apiversion`. See here for more information about the [API for Quota and Usage Information](https://docs.syseleven.de/syseleven-stack/en/reference/get-quota-info).
+
 ### Prometheus
 
 If you want a [Prometheus ServiceMonitor](https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/api.md#servicemonitor) you can use the `prometheus.serviceMonitor.enabled` flag, which is false by default. The default `serviceMonitor.interval` is 10 minutes, since the API is only polled once per hour by the exporter pod.

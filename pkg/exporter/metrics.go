@@ -106,13 +106,13 @@ var (
 		Namespace: namespace,
 		Name:      "s3_space_total_bytes",
 		Help:      "Quota for S3 space per region and project in bytes",
-	}, []string{"region", "project"})
+	}, []string{"region", "project", "type"})
 
 	s3SpaceUsedBytes = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "s3_space_used_bytes",
 		Help:      "Used S3 space per region and project in bytes",
-	}, []string{"region", "project"})
+	}, []string{"region", "project", "type"})
 
 	volumeSpaceTotalGigabytes = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,

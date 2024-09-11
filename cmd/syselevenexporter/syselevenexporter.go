@@ -40,6 +40,7 @@ var (
 	logOutput     string
 	metricsPath   string
 	useAppCreds   bool
+	apiVersion		string
 )
 
 var rootCmd = &cobra.Command{
@@ -84,7 +85,7 @@ var rootCmd = &cobra.Command{
 					if err != nil {
 						log.WithError(err).Fatal("Could not create exporter")
 					}
-					go exporter.Run(interval, exp)
+					go exporter.Run(interval, apiVersion, exp)
 				}(projectID)
 			}
 		} else {
@@ -99,7 +100,7 @@ var rootCmd = &cobra.Command{
 			if err != nil {
 				log.WithError(err).Fatal("Could not create exporter")
 			}
-			go exporter.Run(interval, exp)
+			go exporter.Run(interval, apiVersion, exp)
 		}
 
 		router := chi.NewRouter()
@@ -183,6 +184,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&logOutput, "log.output", "plain", "Set the output format of the log line. Must be plain or json.")
 	rootCmd.PersistentFlags().StringVar(&listenAddress, "web.listen-address", ":8080", "Address to listen on for web interface and telemetry.")
 	rootCmd.PersistentFlags().StringVar(&metricsPath, "web.telemetry-path", "/metrics", "Path under which to expose metrics.")
+	rootCmd.PersistentFlags().StringVar(&apiVersion, "api-version", "v1", "specify the OpenStack API")
 }
 
 func main() {
