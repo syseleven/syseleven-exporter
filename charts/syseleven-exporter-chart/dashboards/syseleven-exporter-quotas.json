@@ -1044,7 +1044,7 @@
                   }
                 ]
               },
-              "unit": "bytes"
+              "unit": "decgbytes"
             },
             "overrides": []
           },
@@ -1142,7 +1142,7 @@
                   }
                 ]
               },
-              "unit": "bytes"
+              "unit": "decgbytes"
             },
             "overrides": []
           },
