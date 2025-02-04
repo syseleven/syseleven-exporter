@@ -11,7 +11,7 @@ spec:
   - name: SysElevenExporter
     rules:
     - alert: SysElevenComputeCores
-      expr: sum((max(syseleven_compute_cores_used)by(__name__, project, region) / max(syseleven_compute_cores_total)by(__name__, project, region)) * 100) by(region, project) > 90
+      expr: sum((max(syseleven_compute_cores_used)by(__name__, project, region) / max(syseleven_compute_cores_total)by(__name__, project, region)) * 100) by(region, project) > {{ .Values.prometheus.rules.SysElevenComputeCores.alertLimit }}
       for: 1m
       labels:
         severity: critical
@@ -19,7 +19,7 @@ spec:
         description: {{ "'{{ $value | humanize }}% of all Compute Cores in project {{ $labels.project }} in region {{ $labels.region }} are in use.'" }}
         summary: {{ "'High usage of Compute Cores in project {{ $labels.project }} detected.'" }}
     - alert: SysElevenComputeInstances
-      expr: sum((max(syseleven_compute_instances_used)by(__name__, project, region) / max(syseleven_compute_instances_total)by(__name__, project, region)) * 100) by(region, project) > 90
+      expr: sum((max(syseleven_compute_instances_used)by(__name__, project, region) / max(syseleven_compute_instances_total)by(__name__, project, region)) * 100) by(region, project) > {{ .Values.prometheus.rules.SysElevenComputeInstances.alertLimit }}
       for: 1m
       labels:
         severity: critical
@@ -27,7 +27,7 @@ spec:
         description: {{ "'{{ $value | humanize }}% of all Compute Instances in project {{ $labels.project }} in region {{ $labels.region }} are in use.'" }}
         summary: {{ "'Nearly all Compute Nodes in project {{ $labels.project }} are in use.'" }}
     - alert: SysElevenComputeRam
-      expr: sum((max(syseleven_compute_ram_used_megabytes)by(__name__, project, region) / max(syseleven_compute_ram_total_megabytes)by(__name__, project, region)) * 100) by(region, project) > 90
+      expr: sum((max(syseleven_compute_ram_used_megabytes)by(__name__, project, region) / max(syseleven_compute_ram_total_megabytes)by(__name__, project, region)) * 100) by(region, project) > {{ .Values.prometheus.rules.SysElevenComputeRam.alertLimit }}
       for: 1m
       labels:
         severity: critical
@@ -35,7 +35,7 @@ spec:
         description: {{ "'{{ $value | humanize }}% of all Compute Ram in project {{ $labels.project }} in region {{ $labels.region }} is in use.'" }}
         summary: {{ "'High memory consumption in project {{ $labels.project }}.'" }}
     - alert: SysElevenDnsZones
-      expr: sum((max(syseleven_dns_zones_used)by(__name__, project, region) / max(syseleven_dns_zones_total)by(__name__, project, region)) * 100) by(region, project) > 90
+      expr: sum((max(syseleven_dns_zones_used)by(__name__, project, region) / max(syseleven_dns_zones_total)by(__name__, project, region)) * 100) by(region, project) > {{ .Values.prometheus.rules.SysElevenDnsZones.alertLimit }}
       for: 1m
       labels:
         severity: critical
@@ -43,7 +43,7 @@ spec:
         description: {{ "'{{ $value | humanize }}% of all DNS Zones in project {{ $labels.project }} in region {{ $labels.region }} are in use.'" }}
         summary: {{ "'Nearly all DNS Zones in project {{ $labels.project }} are in use.'" }}
     - alert: SysElevenNetworkFloatingIps
-      expr: sum((max(syseleven_network_floating_ips_used)by(__name__, project, region) / max(syseleven_network_floating_ips_total)by(__name__, project, region)) * 100) by(region, project) > 90
+      expr: sum((max(syseleven_network_floating_ips_used)by(__name__, project, region) / max(syseleven_network_floating_ips_total)by(__name__, project, region)) * 100) by(region, project) > {{ .Values.prometheus.rules.SysElevenNetworkFloatingIps.alertLimit }}
       for: 1m
       labels:
         severity: critical
@@ -51,7 +51,7 @@ spec:
         description: {{ "'{{ $value | humanize }}% of all Network Floating IPs in project {{ $labels.project }} in region {{ $labels.region }} are in use.'" }}
         summary:  {{ "'Nearly all Network Floating IPs in project {{ $labels.project }} are in use.'" }}
     - alert: SysElevenNetworkLoadbalancers
-      expr: sum((max(syseleven_network_loadbalancers_used)by(__name__, project, region) / max(syseleven_network_loadbalancers_total)by(__name__, project, region)) * 100) by(region, project) > 90
+      expr: sum((max(syseleven_network_loadbalancers_used)by(__name__, project, region) / max(syseleven_network_loadbalancers_total)by(__name__, project, region)) * 100) by(region, project) > {{ .Values.prometheus.rules.SysElevenNetworkLoadbalancers.alertLimit }}
       for: 1m
       labels:
         severity: critical
@@ -59,7 +59,7 @@ spec:
         description: {{ "'{{ $value | humanize }}% of all Network Loadbalancers in project {{ $labels.project }} in region {{ $labels.region }} are in use.'" }}
         summary: {{ "'Nearly all Network Loadbalancers in project {{ $labels.project }} are in use.'" }}
     - alert: SysElevenS3space
-      expr: sum((max(syseleven_s3_space_used_bytes)by(__name__, project, region, type) / max(syseleven_s3_space_total_bytes)by(__name__, project, region, type)) * 100) by(region, project, type) > 90
+      expr: sum((max(syseleven_s3_space_used_bytes)by(__name__, project, region, type) / max(syseleven_s3_space_total_bytes)by(__name__, project, region, type)) * 100) by(region, project, type) > {{ .Values.prometheus.rules.SysElevenS3space.alertLimit }}
       for: 1m
       labels:
         severity: critical
@@ -67,7 +67,7 @@ spec:
         description: {{ "'{{ $value | humanize }}% of all S3 Space in project {{ $labels.project }} from type { $labels.type }} in region {{ $labels.region }} is in use.'" }}
         summary: {{ "'High S3 disk usage in project {{ $labels.project }}.'" }}
     - alert: SysElevenVolumeSpace
-      expr: sum((max(syseleven_volume_space_used_gigabytes)by(__name__, project, region) / max(syseleven_volume_space_total_gigabytes)by(__name__, project, region)) * 100) by(region, project) > 90
+      expr: sum((max(syseleven_volume_space_used_gigabytes)by(__name__, project, region) / max(syseleven_volume_space_total_gigabytes)by(__name__, project, region)) * 100) by(region, project) > {{ .Values.prometheus.rules.SysElevenVolumeSpace.alertLimit }}
       for: 1m
       labels:
         severity: critical
@@ -75,7 +75,7 @@ spec:
         description: {{ "'{{ $value | humanize }}% of all Volume Space in project {{ $labels.project }} in region {{ $labels.region }} is in use.'" }}
         summary: {{ "'High usage of Volume Space in project {{ $labels.project }}.'" }}
     - alert: SysElevenVolumeVolumes
-      expr: sum((max(syseleven_volume_volumes_used)by(__name__, project, region) / max(syseleven_volume_volumes_total)by(__name__, project, region)) * 100) by(region, project) > 90
+      expr: sum((max(syseleven_volume_volumes_used)by(__name__, project, region) / max(syseleven_volume_volumes_total)by(__name__, project, region)) * 100) by(region, project) > {{ .Values.prometheus.rules.SysElevenVolumeVolumes.alertLimit }}
       for: 1m
       labels:
         severity: critical
