@@ -43,6 +43,24 @@ prometheus:
   rules:
     enabled: false
     namespace:
+    SysElevenComputeCores:
+      alertLimit: 90
+    SysElevenComputeInstances:
+      alertLimit: 90
+    SysElevenComputeRam:
+      alertLimit: 90
+    SysElevenDnsZones:
+      alertLimit: 90
+    SysElevenNetworkFloatingIps:
+      alertLimit: 90
+    SysElevenNetworkLoadbalancers:
+      alertLimit: 90
+    SysElevenS3space:
+      alertLimit: 90
+    SysElevenVolumeSpace:
+      alertLimit: 90
+    SysElevenVolumeVolumes:
+      alertLimit: 90
   dashboards:
     enabled: false
     namespace:
