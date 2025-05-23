@@ -40,7 +40,7 @@ var (
 	logOutput     string
 	metricsPath   string
 	useAppCreds   bool
-	apiVersion		string
+	apiVersion    string
 )
 
 var rootCmd = &cobra.Command{
@@ -96,6 +96,10 @@ var rootCmd = &cobra.Command{
 			}
 
 			project, err := auth.GetProject(os.Getenv("OS_APPLICATION_CREDENTIAL_ID"), os.Getenv("OS_APPLICATION_CREDENTIAL_SECRET"))
+			if err != nil {
+				log.WithError(err).Fatal("Could not get project")
+			}
+
 			exp, err := exporter.New(project.ID, useAppCreds, os.Getenv("OS_APPLICATION_CREDENTIAL_ID"), os.Getenv("OS_APPLICATION_CREDENTIAL_SECRET"))
 			if err != nil {
 				log.WithError(err).Fatal("Could not create exporter")
