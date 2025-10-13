@@ -2,7 +2,7 @@ module github.com/syseleven/syseleven-exporter
 
 go 1.22
 
-toolchain go1.24.3
+toolchain go1.25.3
 
 require (
 	github.com/go-chi/chi v1.5.5
