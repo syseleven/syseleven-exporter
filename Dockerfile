@@ -1,4 +1,4 @@
-FROM golang:1.23-alpine3.19 as build
+FROM golang:1.25-alpine3.22 AS build
 
 RUN apk add --no-cache --update git make
 
@@ -8,7 +8,7 @@ COPY . .
 RUN make build
 
 
-FROM alpine:3.21
+FROM alpine:3.22
 
 ARG REVISION
 ARG VERSION
