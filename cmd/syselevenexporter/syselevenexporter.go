@@ -41,6 +41,7 @@ var (
 	metricsPath   string
 	useAppCreds   bool
 	apiVersion    string
+	s3StatsNCS    bool
 )
 
 var rootCmd = &cobra.Command{
@@ -64,6 +65,17 @@ var rootCmd = &cobra.Command{
 		log.Infof(version.Info())
 		log.Infof(version.BuildContext())
 
+		if os.Getenv("IAM_ORG_ID") != "" {
+			if os.Getenv("OS_APPLICATION_CREDENTIAL_SECRET") == "" || os.Getenv("OS_APPLICATION_CREDENTIAL_ID") == "" {
+				log.Fatalf("Fetching S3 stats from NCS only works with AppCredentials.Please set OS_APPLICATION_CREDENTIAL_SECRET and OS_APPLICATION_CREDENTIAL_ID!")
+			} else if !strings.HasPrefix(os.Getenv("OS_APPLICATION_CREDENTIAL_SECRET"), "s11_orgsa_") {
+				log.Fatalf("OS_APPLICATION_CREDENTIAL_SECRET must start with 's11_orgsa_' in order to gather s3 stats from ncs!")
+			}
+			s3StatsNCS = true
+		} else {
+			s3StatsNCS = false
+			log.Infof("IAM_ORG_ID not set. Set it in order to fetch S3 stats from NCS!")
+		}
 		if os.Getenv("OS_APPLICATION_CREDENTIAL_ID") == "" || os.Getenv("OS_APPLICATION_CREDENTIAL_SECRET") == "" {
 			useAppCreds = false
 
@@ -85,7 +97,7 @@ var rootCmd = &cobra.Command{
 					if err != nil {
 						log.WithError(err).Fatal("Could not create exporter")
 					}
-					go exporter.Run(interval, apiVersion, exp)
+					go exporter.Run(interval, apiVersion, s3StatsNCS, exp)
 				}(projectID)
 			}
 		} else {
@@ -104,15 +116,18 @@ var rootCmd = &cobra.Command{
 			if err != nil {
 				log.WithError(err).Fatal("Could not create exporter")
 			}
-			go exporter.Run(interval, apiVersion, exp)
+			go exporter.Run(interval, apiVersion, s3StatsNCS, exp)
 		}
 
 		router := chi.NewRouter()
 		router.Get("/health", func(w http.ResponseWriter, r *http.Request) {
-			fmt.Fprintf(w, "OK")
+			_, err := fmt.Fprintf(w, "OK")
+			if err != nil {
+				log.Error(err)
+			}
 		})
 		router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte(`<html>
+			_, err := w.Write([]byte(`<html>
 			<head><title>SysEleven Exporter</title></head>
 			<body>
 			<h1>SysEleven Exporter</h1>
@@ -129,6 +144,10 @@ var rootCmd = &cobra.Command{
 			</p>
 			</body>
 			</html>`))
+			if err != nil {
+				log.Error(err)
+			}
+
 		})
 		router.Mount(metricsPath, promhttp.Handler())
 
@@ -175,8 +194,10 @@ var versionCmd = &cobra.Command{
 			log.WithError(err).Fatal("Failed to print version information")
 		}
 
-		fmt.Fprintln(os.Stdout, v)
-		return
+		_, err = fmt.Fprintln(os.Stdout, v)
+		if err != nil {
+			log.Error(err)
+		}
 	},
 }
 
