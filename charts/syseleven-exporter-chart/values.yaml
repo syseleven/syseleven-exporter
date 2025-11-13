@@ -9,6 +9,12 @@ image:
   pullPolicy: IfNotPresent
   tag:
 
+existingSecret:
+
+exporter:
+  args:
+    - "--api-version=v1"
+
 service:
   labels: {}
   annotations: {}
@@ -110,3 +116,5 @@ openstack:
   application_credential_id: ""
   application_credential_secret: ""
   apiversion: v1
+  # Set if S3 is used in NCS - Can not be used with username and password!
+  iam_org_id: ""

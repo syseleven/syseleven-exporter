@@ -19,15 +19,11 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 118,
+  "id": 0,
   "links": [],
   "panels": [
     {
       "collapsed": true,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
-      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -69,7 +65,7 @@
             "h": 7,
             "w": 8,
             "x": 0,
-            "y": 25
+            "y": 39
           },
           "id": 25,
           "options": {
@@ -170,7 +166,7 @@
             "h": 7,
             "w": 8,
             "x": 8,
-            "y": 25
+            "y": 39
           },
           "id": 26,
           "options": {
@@ -268,7 +264,7 @@
             "h": 7,
             "w": 8,
             "x": 16,
-            "y": 25
+            "y": 39
           },
           "id": 27,
           "options": {
@@ -304,24 +300,11 @@
           "type": "timeseries"
         }
       ],
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "refId": "A"
-        }
-      ],
       "title": "SysEleven - Compute Cores",
       "type": "row"
     },
     {
       "collapsed": true,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
-      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -363,7 +346,7 @@
             "h": 7,
             "w": 8,
             "x": 0,
-            "y": 33
+            "y": 47
           },
           "id": 15,
           "options": {
@@ -464,7 +447,7 @@
             "h": 7,
             "w": 8,
             "x": 8,
-            "y": 33
+            "y": 47
           },
           "id": 16,
           "options": {
@@ -562,7 +545,7 @@
             "h": 7,
             "w": 8,
             "x": 16,
-            "y": 33
+            "y": 47
           },
           "id": 22,
           "options": {
@@ -598,24 +581,11 @@
           "type": "timeseries"
         }
       ],
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "refId": "A"
-        }
-      ],
       "title": "SysEleven - Compute Ram",
       "type": "row"
     },
     {
-      "collapsed": true,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
-      },
+      "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -623,298 +593,802 @@
         "y": 2
       },
       "id": 7,
-      "panels": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
+      "panels": [],
+      "title": "SysEleven - S3 Space",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
           },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
               },
-              "mappings": [],
-              "max": 100,
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "percent"
-            },
-            "overrides": []
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
           },
-          "gridPos": {
-            "h": 7,
-            "w": 8,
-            "x": 0,
-            "y": 41
-          },
-          "id": 2,
-          "options": {
-            "minVizHeight": 75,
-            "minVizWidth": 75,
-            "orientation": "auto",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "showThresholdLabels": false,
-            "showThresholdMarkers": true,
-            "sizing": "auto",
-            "text": {}
-          },
-          "pluginVersion": "10.4.0",
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${datasource}"
-              },
-              "editorMode": "code",
-              "exemplar": true,
-              "expr": "sum((max(syseleven_s3_space_used_bytes{project=~\"$project\"})by(__name__, project, region, type) / max(syseleven_s3_space_total_bytes{project=~\"$project\"})by(__name__, project, region, type)) * 100) by(region, project, type)",
-              "interval": "",
-              "legendFormat": "{{region}} - {{type}}",
-              "range": true,
-              "refId": "A"
-            }
-          ],
-          "title": "SysEleven - S3 Space",
-          "type": "gauge"
+          "unit": "percent"
         },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisBorderShow": false,
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "insertNulls": false,
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "never",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "bytes"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 7,
-            "w": 8,
-            "x": 8,
-            "y": 41
-          },
-          "id": 4,
-          "options": {
-            "legend": {
-              "calcs": [],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "mode": "multi",
-              "sort": "none"
-            }
-          },
-          "pluginVersion": "10.4.0",
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${datasource}"
-              },
-              "editorMode": "code",
-              "exemplar": true,
-              "expr": "sum(max(syseleven_s3_space_used_bytes{project=~\"$project\"})by(__name__, project, region, type)) by(region, project, type) ",
-              "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "{{region}} - {{type}} ",
-              "range": true,
-              "refId": "A"
-            }
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 3
+      },
+      "id": 2,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
           ],
-          "title": "SysEleven - Used S3 Space",
-          "type": "timeseries"
+          "fields": "",
+          "values": false
         },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisBorderShow": false,
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "insertNulls": false,
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "never",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "bytes"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 7,
-            "w": 8,
-            "x": 16,
-            "y": 41
-          },
-          "id": 5,
-          "options": {
-            "legend": {
-              "calcs": [],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "mode": "multi",
-              "sort": "none"
-            }
-          },
-          "pluginVersion": "10.4.0",
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${datasource}"
-              },
-              "editorMode": "code",
-              "exemplar": true,
-              "expr": "sum(max(syseleven_s3_space_total_bytes{project=~\"$project\"})by(__name__, project, region, type)) by(region, project, type) ",
-              "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "{{region}} - {{type}}",
-              "range": true,
-              "refId": "A"
-            }
-          ],
-          "title": "SysEleven - Total S3 Space",
-          "type": "timeseries"
-        }
-      ],
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto",
+        "text": {}
+      },
+      "pluginVersion": "12.2.0",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "${datasource}"
           },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "sum((max(syseleven_s3_space_used_bytes{project=~\"$project\", region=~\"cbk|fes|dbl\"})by(__name__, project, region, type) / max(syseleven_s3_space_total_bytes{project=~\"$project\", region=~\"cbk|fes|dbl\"})by(__name__, project, region, type)) * 100) by(region, project, type)",
+          "interval": "",
+          "legendFormat": "{{region}} - {{type}}",
+          "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum((max(syseleven_s3_space_used_bytes_ncs{project=~\"$project\"})by(__name__, s3username) / max(syseleven_s3_space_max_bytes_ncs{project=~\"$project\"})by(__name__, s3username)) * 100) by(s3username)",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "B"
         }
       ],
       "title": "SysEleven - S3 Space",
-      "type": "row"
+      "type": "gauge"
     },
     {
-      "collapsed": true,
       "datasource": {
         "type": "prometheus",
         "uid": "${datasource}"
       },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 8,
+        "y": 3
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "sum(max(syseleven_s3_space_used_bytes{project=~\"$project\", region=~\"cbk|fes|dbl\"})by(__name__, project, region, type)) by(region, project, type) ",
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{region}} - {{type}} ",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "sum(max(syseleven_s3_space_used_bytes_ncs{project=~\"$project\"})by(__name__,s3username)) by(s3username) ",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "SysEleven - Used S3 Space",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 16,
+        "y": 3
+      },
+      "id": 5,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "sum(max(syseleven_s3_space_total_bytes{project=~\"$project\", region=~\"cbk|fes|dbl\"})by(__name__, project, region, type)) by(region, project, type) ",
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{region}} - {{type}}",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "sum(max(syseleven_s3_space_used_bytes_ncs{project=~\"$project\"})by(__name__,s3username)) by(s3username) ",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "SysEleven - Total S3 Space",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "left",
+            "cellOptions": {
+              "type": "color-text"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false,
+            "wrapHeaderText": true,
+            "wrapText": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "s3username"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 395
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Description"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 210
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "S3 Usage"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 112
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "unit",
+                "value": "decbytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "S3 Limit"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 146
+              },
+              {
+                "id": "unit",
+                "value": "decbytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "S3 Usage %"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 164
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "lcd",
+                  "type": "gauge",
+                  "valueDisplayMode": "color"
+                }
+              },
+              {
+                "id": "max",
+                "value": 100
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "from": 0,
+                      "result": {
+                        "color": "green",
+                        "index": 1
+                      },
+                      "to": 79
+                    },
+                    "type": "range"
+                  },
+                  {
+                    "options": {
+                      "from": 80,
+                      "result": {
+                        "color": "yellow",
+                        "index": 2
+                      },
+                      "to": 89
+                    },
+                    "type": "range"
+                  },
+                  {
+                    "options": {
+                      "from": 90,
+                      "result": {
+                        "color": "dark-red",
+                        "index": 3
+                      },
+                      "to": 100
+                    },
+                    "type": "range"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "S3 Num of Objects"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 156
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "S3 Max Objets"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 131
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "-1": {
+                        "color": "green",
+                        "index": 0,
+                        "text": "Disabled"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "color-background"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 10
+      },
+      "id": 51,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "12.2.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "syseleven_s3_space_used_bytes_ncs{project=\"$project\"}",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "{{label_name}}",
+          "range": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "syseleven_s3_space_max_bytes_ncs{project=\"$project\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "syseleven_s3_space_used_bytes_ncs{project=\"$project\"} / syseleven_s3_space_max_bytes_ncs{project=\"$project\"} * 100",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "syseleven_s3_num_objects_ncs{project=\"$project\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "syseleven_s3_max_objects_ncs{project=\"$project\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "E"
+        }
+      ],
+      "title": "S3 Stats NCS",
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "s3username",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Time 4": true,
+              "__name__": true,
+              "__name__ 3": true,
+              "alerting": true,
+              "alerting 4": true,
+              "cluster": true,
+              "cluster 4": true,
+              "cluster_id": true,
+              "cluster_id 4": true,
+              "container": true,
+              "container 4": true,
+              "description": false,
+              "description 2": true,
+              "description 3": true,
+              "description 4": true,
+              "description 5": true,
+              "endpoint": true,
+              "endpoint 4": true,
+              "instance": true,
+              "instance 4": true,
+              "job": true,
+              "k8s_cluster_name": true,
+              "k8s_cluster_name 4": true,
+              "namespace": true,
+              "namespace 4": true,
+              "pod": true,
+              "pod 4": true,
+              "project": true,
+              "project 4": true,
+              "provider_cluster": true,
+              "provider_cluster 4": true,
+              "provider_id": true,
+              "provider_id 3": true,
+              "provider_id 4": true,
+              "s3username": false,
+              "service": true,
+              "service 3": true,
+              "service 4": true,
+              "tenant": true,
+              "tenant 3": true,
+              "tenant 4": true
+            },
+            "includeByName": {},
+            "indexByName": {
+              "Time 1": 7,
+              "Time 2": 24,
+              "Time 3": 42,
+              "Time 4": 59,
+              "Time 5": 77,
+              "Value #A": 2,
+              "Value #B": 3,
+              "Value #C": 4,
+              "Value #D": 5,
+              "Value #E": 6,
+              "__name__ 1": 8,
+              "__name__ 2": 25,
+              "__name__ 3": 60,
+              "__name__ 4": 78,
+              "alerting 1": 9,
+              "alerting 2": 26,
+              "alerting 3": 43,
+              "alerting 4": 61,
+              "alerting 5": 79,
+              "cluster 1": 10,
+              "cluster 2": 27,
+              "cluster 3": 44,
+              "cluster 4": 62,
+              "cluster 5": 80,
+              "cluster_id 1": 11,
+              "cluster_id 2": 28,
+              "cluster_id 3": 45,
+              "cluster_id 4": 63,
+              "cluster_id 5": 81,
+              "container 1": 12,
+              "container 2": 29,
+              "container 3": 46,
+              "container 4": 64,
+              "container 5": 82,
+              "description 1": 1,
+              "description 2": 30,
+              "description 3": 47,
+              "description 4": 65,
+              "description 5": 83,
+              "endpoint 1": 13,
+              "endpoint 2": 31,
+              "endpoint 3": 48,
+              "endpoint 4": 66,
+              "endpoint 5": 84,
+              "instance 1": 14,
+              "instance 2": 32,
+              "instance 3": 49,
+              "instance 4": 67,
+              "instance 5": 85,
+              "job 1": 15,
+              "job 2": 33,
+              "job 3": 50,
+              "job 4": 68,
+              "job 5": 86,
+              "k8s_cluster_name 1": 16,
+              "k8s_cluster_name 2": 34,
+              "k8s_cluster_name 3": 51,
+              "k8s_cluster_name 4": 69,
+              "k8s_cluster_name 5": 87,
+              "namespace 1": 17,
+              "namespace 2": 35,
+              "namespace 3": 52,
+              "namespace 4": 70,
+              "namespace 5": 88,
+              "pod 1": 18,
+              "pod 2": 36,
+              "pod 3": 53,
+              "pod 4": 71,
+              "pod 5": 89,
+              "project 1": 19,
+              "project 2": 37,
+              "project 3": 54,
+              "project 4": 72,
+              "project 5": 90,
+              "provider_cluster 1": 20,
+              "provider_cluster 2": 38,
+              "provider_cluster 3": 55,
+              "provider_cluster 4": 73,
+              "provider_cluster 5": 91,
+              "provider_id 1": 21,
+              "provider_id 2": 39,
+              "provider_id 3": 56,
+              "provider_id 4": 74,
+              "provider_id 5": 92,
+              "s3username": 0,
+              "service 1": 22,
+              "service 2": 40,
+              "service 3": 57,
+              "service 4": 75,
+              "service 5": 93,
+              "tenant 1": 23,
+              "tenant 2": 41,
+              "tenant 3": 58,
+              "tenant 4": 76,
+              "tenant 5": 94
+            },
+            "orderByMode": "manual",
+            "renameByName": {
+              "Value #A": "S3 Usage",
+              "Value #B": "S3 Limit",
+              "Value #C": "S3 Usage %",
+              "Value #D": "S3 Num of Objects",
+              "Value #E": "S3 Max Objets",
+              "description 1": "Description"
+            }
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "table"
+    },
+    {
+      "collapsed": true,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 3
+        "y": 16
       },
       "id": 39,
       "panels": [
@@ -935,7 +1409,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": 0
                   },
                   {
                     "color": "red",
@@ -951,7 +1426,7 @@
             "h": 7,
             "w": 8,
             "x": 0,
-            "y": 28
+            "y": 11
           },
           "id": 40,
           "options": {
@@ -970,7 +1445,7 @@
             "sizing": "auto",
             "text": {}
           },
-          "pluginVersion": "10.4.0",
+          "pluginVersion": "12.2.0",
           "targets": [
             {
               "datasource": {
@@ -1006,6 +1481,7 @@
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
+                "barWidthFactor": 0.6,
                 "drawStyle": "line",
                 "fillOpacity": 10,
                 "gradientMode": "none",
@@ -1022,6 +1498,7 @@
                   "type": "linear"
                 },
                 "showPoints": "never",
+                "showValues": false,
                 "spanNulls": false,
                 "stacking": {
                   "group": "A",
@@ -1036,7 +1513,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": 0
                   },
                   {
                     "color": "red",
@@ -1052,7 +1530,7 @@
             "h": 7,
             "w": 8,
             "x": 8,
-            "y": 28
+            "y": 11
           },
           "id": 41,
           "options": {
@@ -1063,11 +1541,12 @@
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "multi",
               "sort": "none"
             }
           },
-          "pluginVersion": "10.4.0",
+          "pluginVersion": "12.2.0",
           "targets": [
             {
               "datasource": {
@@ -1104,6 +1583,7 @@
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
+                "barWidthFactor": 0.6,
                 "drawStyle": "line",
                 "fillOpacity": 10,
                 "gradientMode": "none",
@@ -1120,6 +1600,7 @@
                   "type": "linear"
                 },
                 "showPoints": "never",
+                "showValues": false,
                 "spanNulls": false,
                 "stacking": {
                   "group": "A",
@@ -1134,7 +1615,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": 0
                   },
                   {
                     "color": "red",
@@ -1150,7 +1632,7 @@
             "h": 7,
             "w": 8,
             "x": 16,
-            "y": 28
+            "y": 11
           },
           "id": 42,
           "options": {
@@ -1161,11 +1643,12 @@
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "multi",
               "sort": "none"
             }
           },
-          "pluginVersion": "10.4.0",
+          "pluginVersion": "12.2.0",
           "targets": [
             {
               "datasource": {
@@ -1186,29 +1669,16 @@
           "type": "timeseries"
         }
       ],
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "refId": "A"
-        }
-      ],
       "title": "SysEleven - Volume Space",
       "type": "row"
     },
     {
       "collapsed": true,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
-      },
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 4
+        "y": 17
       },
       "id": 44,
       "panels": [
@@ -1245,7 +1715,7 @@
             "h": 7,
             "w": 8,
             "x": 0,
-            "y": 29
+            "y": 43
           },
           "id": 45,
           "options": {
@@ -1346,7 +1816,7 @@
             "h": 7,
             "w": 8,
             "x": 8,
-            "y": 29
+            "y": 43
           },
           "id": 31,
           "options": {
@@ -1444,7 +1914,7 @@
             "h": 7,
             "w": 8,
             "x": 16,
-            "y": 29
+            "y": 43
           },
           "id": 47,
           "options": {
@@ -1480,29 +1950,16 @@
           "type": "timeseries"
         }
       ],
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "refId": "A"
-        }
-      ],
       "title": "SysEleven - Volume Volumes",
       "type": "row"
     },
     {
       "collapsed": true,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
-      },
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 5
+        "y": 18
       },
       "id": 14,
       "panels": [
@@ -1523,8 +1980,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -1540,7 +1996,7 @@
             "h": 7,
             "w": 8,
             "x": 0,
-            "y": 13
+            "y": 27
           },
           "id": 10,
           "options": {
@@ -1625,8 +2081,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -1642,7 +2097,7 @@
             "h": 7,
             "w": 8,
             "x": 8,
-            "y": 13
+            "y": 27
           },
           "id": 11,
           "options": {
@@ -1724,8 +2179,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -1741,7 +2195,7 @@
             "h": 7,
             "w": 8,
             "x": 16,
-            "y": 13
+            "y": 27
           },
           "id": 12,
           "options": {
@@ -1777,29 +2231,16 @@
           "type": "timeseries"
         }
       ],
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "refId": "A"
-        }
-      ],
       "title": "SysEleven - Compute Instances",
       "type": "row"
     },
     {
       "collapsed": true,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
-      },
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 6
+        "y": 19
       },
       "id": 34,
       "panels": [
@@ -1820,8 +2261,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -1837,7 +2277,7 @@
             "h": 7,
             "w": 8,
             "x": 0,
-            "y": 7
+            "y": 21
           },
           "id": 48,
           "options": {
@@ -1922,8 +2362,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -1939,7 +2378,7 @@
             "h": 7,
             "w": 8,
             "x": 8,
-            "y": 7
+            "y": 21
           },
           "id": 49,
           "options": {
@@ -2021,8 +2460,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2038,7 +2476,7 @@
             "h": 7,
             "w": 8,
             "x": 16,
-            "y": 7
+            "y": 21
           },
           "id": 50,
           "options": {
@@ -2074,29 +2512,16 @@
           "type": "timeseries"
         }
       ],
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "refId": "A"
-        }
-      ],
       "title": "SysEleven - Network LoadBalancers",
       "type": "row"
     },
     {
       "collapsed": true,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
-      },
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 7
+        "y": 20
       },
       "id": 29,
       "panels": [
@@ -2117,8 +2542,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2134,7 +2558,7 @@
             "h": 7,
             "w": 8,
             "x": 0,
-            "y": 15
+            "y": 29
           },
           "id": 30,
           "options": {
@@ -2219,8 +2643,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2236,7 +2659,7 @@
             "h": 7,
             "w": 8,
             "x": 8,
-            "y": 15
+            "y": 29
           },
           "id": 36,
           "options": {
@@ -2318,8 +2741,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2335,7 +2757,7 @@
             "h": 7,
             "w": 8,
             "x": 16,
-            "y": 15
+            "y": 29
           },
           "id": 32,
           "options": {
@@ -2371,29 +2793,16 @@
           "type": "timeseries"
         }
       ],
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "refId": "A"
-        }
-      ],
       "title": "SysEleven - Network Floating IPs",
       "type": "row"
     },
     {
       "collapsed": true,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
-      },
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 8
+        "y": 21
       },
       "id": 24,
       "panels": [
@@ -2414,8 +2823,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2431,7 +2839,7 @@
             "h": 7,
             "w": 8,
             "x": 0,
-            "y": 47
+            "y": 61
           },
           "id": 20,
           "options": {
@@ -2516,8 +2924,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2533,7 +2940,7 @@
             "h": 7,
             "w": 8,
             "x": 8,
-            "y": 47
+            "y": 61
           },
           "id": 21,
           "options": {
@@ -2615,8 +3022,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2632,7 +3038,7 @@
             "h": 7,
             "w": 8,
             "x": 16,
-            "y": 47
+            "y": 61
           },
           "id": 17,
           "options": {
@@ -2668,56 +3074,42 @@
           "type": "timeseries"
         }
       ],
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "refId": "A"
-        }
-      ],
       "title": "SysEleven - DNS Zones",
       "type": "row"
     }
   ],
-  "schemaVersion": 39,
+  "preload": false,
+  "refresh": "",
+  "schemaVersion": 42,
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
-          "selected": false,
           "text": "Prometheus",
-          "value": "prometheus"
+          "value": "PBFA97CFB590B2093"
         },
-        "hide": 0,
         "includeAll": false,
         "label": "Data Source",
-        "multi": false,
         "name": "datasource",
         "options": [],
         "query": "prometheus",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
         "type": "datasource"
       },
       {
         "current": {
-          "selected": false,
-          "text": "046ebaa2b2ba4182bd5e6a2d98af2bc7",
-          "value": "046ebaa2b2ba4182bd5e6a2d98af2bc7"
+          "text": "8f033db675cc4a77b0148f63699af3b3",
+          "value": "8f033db675cc4a77b0148f63699af3b3"
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "prometheus"
+          "uid": "${datasource}"
         },
         "definition": "label_values(syseleven_compute_cores_total,project)",
-        "hide": 0,
         "includeAll": false,
         "label": "Project",
-        "multi": false,
         "name": "project",
         "options": [],
         "query": {
@@ -2727,20 +3119,16 @@
         },
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
         "type": "query"
       }
     ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "SysEleven - Quotas",
-  "uid": "ezkVYBqMz",
-  "version": 2,
-  "weekStart": ""
+  "version": 2
 }
