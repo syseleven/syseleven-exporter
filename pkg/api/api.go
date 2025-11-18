@@ -128,9 +128,7 @@ func GetCurrentUsageV1(projectID, token string) (map[string]CurrentUsageV1, erro
 
 	var currentUsages = make(map[string]CurrentUsageV1)
 
-	err := json.Unmarshal(resp, &currentUsages)
-
-	if err != nil {
+	if err := json.Unmarshal(resp, &currentUsages); err != nil {
 		return nil, err
 	}
 
