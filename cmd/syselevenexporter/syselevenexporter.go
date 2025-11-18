@@ -121,8 +121,7 @@ var rootCmd = &cobra.Command{
 
 		router := chi.NewRouter()
 		router.Get("/health", func(w http.ResponseWriter, r *http.Request) {
-			_, err := fmt.Fprintf(w, "OK")
-			if err != nil {
+			_, err := fmt.Fprintf(w, "OK"); err != nil {
 				log.Error(err)
 			}
 		})
