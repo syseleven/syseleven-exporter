@@ -152,7 +152,6 @@ func GetS3InfoNCS(projectID string) ([]S3UsageNCS, error) {
 
 		if err := json.Unmarshal(resp, &currentUsage); if err != nil {
 
-		if err != nil {
 			return nil, err
 		}
 		s3Usage = append(s3Usage, S3UsageNCS{S3UsersNCS: t, S3InfoNCS: currentUsage})
