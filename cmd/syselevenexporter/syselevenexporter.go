@@ -126,7 +126,7 @@ var rootCmd = &cobra.Command{
 			}
 		})
 		router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-			_, err := w.Write([]byte(`<html>
+			if _, err := w.Write([]byte(`<html>
 			<head><title>SysEleven Exporter</title></head>
 			<body>
 			<h1>SysEleven Exporter</h1>
