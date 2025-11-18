@@ -192,8 +192,7 @@ var versionCmd = &cobra.Command{
 			log.WithError(err).Fatal("Failed to print version information")
 		}
 
-		_, err = fmt.Fprintln(os.Stdout, v)
-		if err != nil {
+		if _, err = fmt.Fprintln(os.Stdout, v); err != nil {
 			log.Error(err)
 		}
 	},
