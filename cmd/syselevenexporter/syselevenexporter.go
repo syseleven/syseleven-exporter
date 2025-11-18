@@ -142,8 +142,7 @@ var rootCmd = &cobra.Command{
 			</ul>
 			</p>
 			</body>
-			</html>`))
-			if err != nil {
+			</html>`)); err != nil {
 				log.Error(err)
 			}
 
