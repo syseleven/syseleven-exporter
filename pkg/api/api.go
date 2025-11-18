@@ -75,7 +75,7 @@ func GetQuotaV3(projectID, token string) (map[string]QuotaV3, error) {
 
 	var quotas = make(map[string]QuotaV3)
 
-	err := json.Unmarshal(resp, &quotas)
+	if err := json.Unmarshal(resp, &quotas); err != nil {
 
 	if err != nil {
 		return nil, err
