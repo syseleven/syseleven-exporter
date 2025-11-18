@@ -65,16 +65,16 @@ var rootCmd = &cobra.Command{
 		log.Infof(version.Info())
 		log.Infof(version.BuildContext())
 
-		if os.Getenv("IAM_ORG_ID") != "" {
-			if os.Getenv("OS_APPLICATION_CREDENTIAL_SECRET") == "" || os.Getenv("OS_APPLICATION_CREDENTIAL_ID") == "" {
+		if len(os.Getenv("IAM_ORG_ID")) == 0 {
+			log.Infof("IAM_ORG_ID not set. Set it in order to fetch S3 stats from NCS!")
+		} else {
+			if len(os.Getenv("OS_APPLICATION_CREDENTIAL_SECRET")) == 0 || len(os.Getenv("OS_APPLICATION_CREDENTIAL_ID")) == 0 {
 				log.Fatalf("Fetching S3 stats from NCS only works with AppCredentials.Please set OS_APPLICATION_CREDENTIAL_SECRET and OS_APPLICATION_CREDENTIAL_ID!")
-			} else if !strings.HasPrefix(os.Getenv("OS_APPLICATION_CREDENTIAL_SECRET"), "s11_orgsa_") {
+			}
+			if !strings.HasPrefix(os.Getenv("OS_APPLICATION_CREDENTIAL_SECRET"), "s11_orgsa_") {
 				log.Fatalf("OS_APPLICATION_CREDENTIAL_SECRET must start with 's11_orgsa_' in order to gather s3 stats from ncs!")
 			}
 			s3StatsNCS = true
-		} else {
-			s3StatsNCS = false
-			log.Infof("IAM_ORG_ID not set. Set it in order to fetch S3 stats from NCS!")
 		}
 		if os.Getenv("OS_APPLICATION_CREDENTIAL_ID") == "" || os.Getenv("OS_APPLICATION_CREDENTIAL_SECRET") == "" {
 			useAppCreds = false
