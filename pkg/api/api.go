@@ -132,9 +132,8 @@ func GetCurrentUsageV1(projectID, token string) (map[string]CurrentUsageV1, erro
 }
 
 func GetS3InfoNCS(projectID string) ([]S3UsageNCS, error) {
-	if os.Getenv("SYSELEVEN_IAM_API_ENDPOINT") == "" {
-		endpointIam = "https://iam.apis.syseleven.de"
-	} else {
+    endpointIam = "https://iam.apis.syseleven.de"
+	if len(os.Getenv("SYSELEVEN_IAM_API_ENDPOINT")) > 0 {
 		endpointIam = os.Getenv("SYSELEVEN_IAM_API_ENDPOINT")
 	}
 
