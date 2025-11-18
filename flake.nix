@@ -37,11 +37,19 @@
             CGO_ENABLED = 0;
           };
 
-          ldflags = [
-            "-s"
-            "-w"
-            "-X github.com/syseleven/syseleven-exporter/pkg/version.Version=${version}"
-          ];
+          ldflags =
+            let
+              repo = "github.com/syseleven/syseleven-exporter";
+            in
+            [
+              "-s"
+              "-w"
+              "-X ${repo}/pkg/version.Version=${version}"
+              "-X ${repo}/pkg/version.Revision=${self.rev or self.dirtyRev or "dirty"}"
+              "-X ${repo}/pkg/version.Branch=HEAD"
+              "-X ${repo}/pkg/version.BuildUser=root"
+              "-X ${repo}/pkg/version.BuildDate=${toString (self.lastModified or 0)}"
+            ];
 
           vendorHash = "sha256-DJa/74kIQebJhGYI6f+QVw1E5vhRioeBZd1ERUc/tp8=";
           doCheck = false;
