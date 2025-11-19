@@ -114,6 +114,42 @@ var (
 		Help:      "Used S3 space per region and project in bytes",
 	}, []string{"region", "project", "type"})
 
+	s3SpaceMaxBytesNcs = promauto.NewGaugeVec(prometheus.GaugeOpts{
+		Namespace: namespace,
+		Name:      "s3_space_max_bytes_ncs",
+		Help:      "Quota for S3 space in ncs regions in bytes",
+	}, []string{"project", "s3username", "description"})
+
+	s3SpaceUsedBytesNcs = promauto.NewGaugeVec(prometheus.GaugeOpts{
+		Namespace: namespace,
+		Name:      "s3_space_used_bytes_ncs",
+		Help:      "Used S3 space in ncs regions in bytes",
+	}, []string{"project", "s3username", "description"})
+
+	s3EnabledNcs = promauto.NewGaugeVec(prometheus.GaugeOpts{
+		Namespace: namespace,
+		Name:      "s3_enabled_ncs",
+		Help:      "Checks if s3 space is enabled for user or not",
+	}, []string{"project", "s3username", "description"})
+
+	s3CheckEnabledNcs = promauto.NewGaugeVec(prometheus.GaugeOpts{
+		Namespace: namespace,
+		Name:      "s3_check_enabled_ncs",
+		Help:      "Checks if check on raw is enabled for user or not",
+	}, []string{"project", "s3username", "description"})
+
+	s3NumObjectsNcs = promauto.NewGaugeVec(prometheus.GaugeOpts{
+		Namespace: namespace,
+		Name:      "s3_num_objects_ncs",
+		Help:      "Number of objects stored in S3",
+	}, []string{"project", "s3username", "description"})
+
+	s3MaxObjectsNcs = promauto.NewGaugeVec(prometheus.GaugeOpts{
+		Namespace: namespace,
+		Name:      "s3_max_objects_ncs",
+		Help:      "Maximal number of objects stored in S3",
+	}, []string{"project", "s3username", "description"})
+
 	volumeSpaceTotalGigabytes = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "volume_space_total_gigabytes",

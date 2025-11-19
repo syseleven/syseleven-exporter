@@ -27,7 +27,7 @@ import (
 	"github.com/syseleven/syseleven-exporter/pkg/exporter"
 	"github.com/syseleven/syseleven-exporter/pkg/version"
 
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -41,6 +41,7 @@ var (
 	metricsPath   string
 	useAppCreds   bool
 	apiVersion    string
+	s3StatsNCS    bool
 )
 
 var rootCmd = &cobra.Command{
@@ -61,9 +62,20 @@ var rootCmd = &cobra.Command{
 		}
 		log.SetLevel(lvl)
 
-		log.Infof(version.Info())
-		log.Infof(version.BuildContext())
+		log.Info(version.Info())
+		log.Info(version.BuildContext())
 
+		if len(os.Getenv("IAM_ORG_ID")) == 0 {
+			log.Infof("IAM_ORG_ID not set. Set it in order to fetch S3 stats from NCS!")
+		} else {
+			if len(os.Getenv("OS_APPLICATION_CREDENTIAL_SECRET")) == 0 || len(os.Getenv("OS_APPLICATION_CREDENTIAL_ID")) == 0 {
+				log.Fatalf("Fetching S3 stats from NCS only works with AppCredentials.Please set OS_APPLICATION_CREDENTIAL_SECRET and OS_APPLICATION_CREDENTIAL_ID!")
+			}
+			if !strings.HasPrefix(os.Getenv("OS_APPLICATION_CREDENTIAL_SECRET"), "s11_orgsa_") {
+				log.Fatalf("OS_APPLICATION_CREDENTIAL_SECRET must start with 's11_orgsa_' in order to gather s3 stats from ncs!")
+			}
+			s3StatsNCS = true
+		}
 		if os.Getenv("OS_APPLICATION_CREDENTIAL_ID") == "" || os.Getenv("OS_APPLICATION_CREDENTIAL_SECRET") == "" {
 			useAppCreds = false
 
@@ -85,7 +97,7 @@ var rootCmd = &cobra.Command{
 					if err != nil {
 						log.WithError(err).Fatal("Could not create exporter")
 					}
-					go exporter.Run(interval, apiVersion, exp)
+					go exporter.Run(interval, apiVersion, s3StatsNCS, exp)
 				}(projectID)
 			}
 		} else {
@@ -104,15 +116,17 @@ var rootCmd = &cobra.Command{
 			if err != nil {
 				log.WithError(err).Fatal("Could not create exporter")
 			}
-			go exporter.Run(interval, apiVersion, exp)
+			go exporter.Run(interval, apiVersion, s3StatsNCS, exp)
 		}
 
 		router := chi.NewRouter()
 		router.Get("/health", func(w http.ResponseWriter, r *http.Request) {
-			fmt.Fprintf(w, "OK")
+			if _, err := fmt.Fprintf(w, "OK"); err != nil {
+				log.Error(err)
+			}
 		})
 		router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte(`<html>
+			if _, err := w.Write([]byte(`<html>
 			<head><title>SysEleven Exporter</title></head>
 			<body>
 			<h1>SysEleven Exporter</h1>
@@ -128,7 +142,10 @@ var rootCmd = &cobra.Command{
 			</ul>
 			</p>
 			</body>
-			</html>`))
+			</html>`)); err != nil {
+				log.Error(err)
+			}
+
 		})
 		router.Mount(metricsPath, promhttp.Handler())
 
@@ -175,8 +192,9 @@ var versionCmd = &cobra.Command{
 			log.WithError(err).Fatal("Failed to print version information")
 		}
 
-		fmt.Fprintln(os.Stdout, v)
-		return
+		if _, err = fmt.Fprintln(os.Stdout, v); err != nil {
+			log.Error(err)
+		}
 	},
 }
 

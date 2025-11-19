@@ -46,26 +46,26 @@ type QuotaV3 struct {
 	NetworkVpnIpsecpolicies        float64 `json:"network.vpn_ipsecpolicies"`
 	NetworkVpnServices             float64 `json:"network.vpn_services"`
 	Objectstorage                  []struct {
-		SpaceBytes float64  `json:"space_bytes"`
-		Type       string `json:"type"`
+		SpaceBytes float64 `json:"space_bytes"`
+		Type       string  `json:"type"`
 	} `json:"objectstorage"`
-	VolumeBackupGb  							 float64 `json:"volume.backup_gb"`
-	VolumeBackups   							 float64 `json:"volume.backups"`
-	VolumeSnapshots 							 float64 `json:"volume.snapshots"`
-	VolumeSpaceGb   							 float64 `json:"volume.space_gb"`
-	VolumeVolumes   							 float64 `json:"volume.volumes"`
+	VolumeBackupGb  float64 `json:"volume.backup_gb"`
+	VolumeBackups   float64 `json:"volume.backups"`
+	VolumeSnapshots float64 `json:"volume.snapshots"`
+	VolumeSpaceGb   float64 `json:"volume.space_gb"`
+	VolumeVolumes   float64 `json:"volume.volumes"`
 }
 
 type CurrentUsageV3 struct {
-	ComputeCores   								 float64 `json:"compute.cores"`
-	ComputeFlavors                 map[string]float64 `json:"compute.flavors"`
-	ComputeInstances    					 float64 `json:"compute.instances"`
-	ComputeRAMMb        					 float64 `json:"compute.ram_mb"`
-	ComputeServerGroups 					 float64 `json:"compute.server_groups"`
-	DNSZones            					 float64 `json:"dns.zones"`
-	ImageImages         					 float64 `json:"image.images"`
-	ImageSpaceBytes     					 float64 `json:"image.space_bytes"`
-	LoadbalancerFlavors 					 struct {
+	ComputeCores        float64            `json:"compute.cores"`
+	ComputeFlavors      map[string]float64 `json:"compute.flavors"`
+	ComputeInstances    float64            `json:"compute.instances"`
+	ComputeRAMMb        float64            `json:"compute.ram_mb"`
+	ComputeServerGroups float64            `json:"compute.server_groups"`
+	DNSZones            float64            `json:"dns.zones"`
+	ImageImages         float64            `json:"image.images"`
+	ImageSpaceBytes     float64            `json:"image.space_bytes"`
+	LoadbalancerFlavors struct {
 	} `json:"loadbalancer.flavors"`
 	LoadbalancerHealthmonitors     float64 `json:"loadbalancer.healthmonitors"`
 	LoadbalancerListeners          float64 `json:"loadbalancer.listeners"`
@@ -88,8 +88,8 @@ type CurrentUsageV3 struct {
 	NetworkVpnIpsecpolicies        float64 `json:"network.vpn_ipsecpolicies"`
 	NetworkVpnServices             float64 `json:"network.vpn_services"`
 	Objectstorage                  []struct {
-		SpaceBytes float64    `json:"space_bytes"`
-		Type       string `json:"type"`
+		SpaceBytes float64 `json:"space_bytes"`
+		Type       string  `json:"type"`
 	} `json:"objectstorage"`
 	VolumeBackupGb  float64 `json:"volume.backup_gb"`
 	VolumeBackups   float64 `json:"volume.backups"`
@@ -139,4 +139,25 @@ type CurrentUsageV1 struct {
 	S3SpaceBytes                   float64            `json:"s3.space_bytes"`
 	VolumeSpaceGb                  float64            `json:"volume.space_gb"`
 	VolumeVolumes                  float64            `json:"volume.volumes"`
+}
+
+type S3UsersNCS struct {
+	Name        string `json:"name"`
+	Id          string `json:"id"`
+	Description string `json:"description"`
+}
+type S3InfoNCS struct {
+	SizeKB     float64 `json:"size_kb"`
+	Size       float64 `json:"size"`
+	MaxSizeKB  float64 `json:"max_size_kb"`
+	MaxSize    float64 `json:"max_size"`
+	NumObjects float64 `json:"num_objects"`
+	MaxObjects float64 `json:"max_objects"`
+	Enabled    bool    `json:"enabled"`
+	CheckOnRaw bool    `json:"check_on_raw"`
+}
+
+type S3UsageNCS struct {
+	S3UsersNCS
+	S3InfoNCS
 }

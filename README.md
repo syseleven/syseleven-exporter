@@ -38,12 +38,23 @@ There are two authentication options available:
   *Else the authentication won't work. Also this means that you can only scrape metrics for one project.*
   *This will be the project the application credentials are created in and scoped to.*
 
+- In order to fetch S3 stats from NCS set this
+
+  ```sh
+  export IAM_ORG_ID=
+  ```
+
+  *Note: this only works with application credentials*
+
 - Optional: Configure API endpoints for non standard (not `https://keystone.cloud.syseleven.net:5000/v3`
 and `https://api.cloud.syseleven.net:5001`)
 
   ```sh
   export OS_AUTH_URL="https://api.example.syseleven.de:5000"
   export SYSELEVEN_QUOTA_API_ENDPOINT="https://api.example.syseleven.de:5001"
+
+  # When using S3 in NCS
+  export SYSELEVEN_IAM_API_ENDPOINT=
   ```
 
 Then run the exporter:

@@ -31,9 +31,18 @@ spec:
           args:
             - "--api-version"
             - {{ .Values.openstack.apiversion }}
+            {{- if .Values.exporter.args }}
+            {{- range .Values.exporter.args }}
+            - {{ .}}
+            {{- end }}
+            {{- end }}
           envFrom:
             - secretRef:
+              {{- if .Values.existingSecret }}
+                name: {{ .Values.existingSecret }}
+              {{- else }}
                 name: {{ template "syseleven-exporter.secret" . }}
+              {{- end }}
           ports:
             - containerPort: {{ .Values.service.internalPort }}
           livenessProbe:
