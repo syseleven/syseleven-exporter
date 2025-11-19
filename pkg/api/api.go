@@ -132,7 +132,7 @@ func GetCurrentUsageV1(projectID, token string) (map[string]CurrentUsageV1, erro
 }
 
 func GetS3InfoNCS(projectID string) ([]S3UsageNCS, error) {
-    endpointIam = "https://iam.apis.syseleven.de"
+	endpointIam = "https://iam.apis.syseleven.de"
 	if len(os.Getenv("SYSELEVEN_IAM_API_ENDPOINT")) > 0 {
 		endpointIam = os.Getenv("SYSELEVEN_IAM_API_ENDPOINT")
 	}
@@ -150,7 +150,7 @@ func GetS3InfoNCS(projectID string) ([]S3UsageNCS, error) {
 
 		var currentUsage S3InfoNCS
 
-		if err := json.Unmarshal(resp, &currentUsage); if err != nil {
+		if err := json.Unmarshal(resp, &currentUsage); err != nil {
 			return nil, err
 		}
 		s3Usage = append(s3Usage, S3UsageNCS{S3UsersNCS: t, S3InfoNCS: currentUsage})

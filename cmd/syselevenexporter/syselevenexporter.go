@@ -27,7 +27,7 @@ import (
 	"github.com/syseleven/syseleven-exporter/pkg/exporter"
 	"github.com/syseleven/syseleven-exporter/pkg/version"
 
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -62,8 +62,8 @@ var rootCmd = &cobra.Command{
 		}
 		log.SetLevel(lvl)
 
-		log.Infof(version.Info())
-		log.Infof(version.BuildContext())
+		log.Info(version.Info())
+		log.Info(version.BuildContext())
 
 		if len(os.Getenv("IAM_ORG_ID")) == 0 {
 			log.Infof("IAM_ORG_ID not set. Set it in order to fetch S3 stats from NCS!")
@@ -121,7 +121,7 @@ var rootCmd = &cobra.Command{
 
 		router := chi.NewRouter()
 		router.Get("/health", func(w http.ResponseWriter, r *http.Request) {
-			_, err := fmt.Fprintf(w, "OK"); err != nil {
+			if _, err := fmt.Fprintf(w, "OK"); err != nil {
 				log.Error(err)
 			}
 		})

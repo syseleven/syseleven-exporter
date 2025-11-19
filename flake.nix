@@ -51,7 +51,7 @@
               "-X ${repo}/pkg/version.BuildDate=${toString (self.lastModified or 0)}"
             ];
 
-          vendorHash = "sha256-DJa/74kIQebJhGYI6f+QVw1E5vhRioeBZd1ERUc/tp8=";
+          vendorHash = "sha256-loGLZ+6gQd9UNuXoE0LEuqGRy7BDFifUgiuSq7aa5vc=";
           doCheck = false;
         };
 
