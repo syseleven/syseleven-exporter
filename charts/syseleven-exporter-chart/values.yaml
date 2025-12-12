@@ -62,6 +62,8 @@ prometheus:
       alertLimit: 90
     SysElevenS3space:
       alertLimit: 90
+    SysElevenS3objects:
+      alertLimit: 90
     SysElevenVolumeSpace:
       alertLimit: 90
     SysElevenVolumeVolumes:
