@@ -9,11 +9,7 @@ image:
   pullPolicy: IfNotPresent
   tag:
 
-existingSecret:
-
-exporter:
-  args:
-    - "--api-version=v1"
+existingSecret: ~
 
 service:
   labels: {}
