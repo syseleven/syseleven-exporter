@@ -11,6 +11,9 @@ image:
 
 existingSecret: ~
 
+exporter:
+  args: []
+
 service:
   labels: {}
   annotations: {}
