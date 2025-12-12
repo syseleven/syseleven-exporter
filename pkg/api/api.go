@@ -70,7 +70,7 @@ func GetQuotaV3(projectID, token string) (map[string]QuotaV3, error) {
 	} else {
 		endpoint = os.Getenv("SYSELEVEN_QUOTA_API_ENDPOINT")
 	}
-	url := fmt.Sprintf("%s/v1/projects/%s/quota", endpoint, projectID)
+	url := fmt.Sprintf("%s/v3/projects/%s/quota", endpoint, projectID)
 	resp, _ := MakeRequest(url, token, "X-Auth-Token")
 
 	var quotas = make(map[string]QuotaV3)
