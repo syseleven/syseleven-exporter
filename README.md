@@ -18,6 +18,9 @@ make build
 Set the environment variables for authentication against the SysEleven API.
 There are two authentication options available:
 
+> [!NOTE]
+> Fetching NCS S3 metrics only works with application credentials
+
 - Username and password
 
   ```sh
@@ -38,23 +41,33 @@ There are two authentication options available:
   *Else the authentication won't work. Also this means that you can only scrape metrics for one project.*
   *This will be the project the application credentials are created in and scoped to.*
 
-- In order to fetch S3 stats from NCS set this
+  ---
+
+  For NCS (HAM1/DUS2), the application credentials look like following:
+
+  ```sh
+  export OS_APPLICATION_CREDENTIAL_ID=s11auth:<PROJECT_ID>
+  export OS_APPLICATION_CREDENTIAL_SECRET=s11_orgsa_<...>
+  ```
+
+- In order for the exporter to fetch S3 metrics from NCS, you need to set the `IAM_ORG_ID` variable:
 
   ```sh
   export IAM_ORG_ID=
   ```
+  You can find this ID from the URL in SysEleven Dashboard, e.g. `https://dashboard.syseleven.de/dashboard/iam/organizations/00000000-0000-0000-0000-000000000000`
 
-  *Note: this only works with application credentials*
+  ---
 
-- Optional: Configure API endpoints for non standard (not `https://keystone.cloud.syseleven.net:5000/v3`
-and `https://api.cloud.syseleven.net:5001`)
+- Optional: Configure API endpoints for non standard (not `https://keystone.cloud.syseleven.net:5000/v3`,
+`https://api.cloud.syseleven.net:5001` or `https://iam.apis.syseleven.de`)
 
   ```sh
   export OS_AUTH_URL="https://api.example.syseleven.de:5000"
   export SYSELEVEN_QUOTA_API_ENDPOINT="https://api.example.syseleven.de:5001"
 
   # When using S3 in NCS
-  export SYSELEVEN_IAM_API_ENDPOINT=
+  export SYSELEVEN_IAM_API_ENDPOINT="https://iam.example.syseleven.de"
   ```
 
 Then run the exporter:
@@ -96,6 +109,12 @@ docker pull syseleven/syseleven-exporter:<TAG>
 | syseleven_network_loadbalancers_used | Number of used load balancers per `region` and `project` |
 | syseleven_s3_space_total_bytes | Quota for S3 space per `region`, `project` and `type` in bytes |
 | syseleven_s3_space_used_bytes | Used S3 space per `region` and `project` in bytes |
+| syseleven_s3_space_max_bytes_ncs | Quota for S3 space in ncs regions in bytes |
+| syseleven_s3_space_used_bytes_ncs | Used S3 space in ncs regions in bytes |
+| syseleven_s3_num_objects_ncs | Number of objects stored in S3 |
+| syseleven_s3_max_objects_ncs | Maximal number of objects stored in S3 |
+| syseleven_s3_enabled_ncs | Checks if s3 space is enabled for user or not |
+| syseleven_s3_check_enabled_ncs | Checks if check on raw is enabled for user or not |
 | syseleven_volume_space_total_gigabytes | Quota for volume space per `region` and `project` in gigabytes |
 | syseleven_volume_space_used_gigabytes | Number of used volume space per `region` and `project` in gigabytes |
 | syseleven_volume_volumes_total | Quota for number of volumes per `region` and `project` |
