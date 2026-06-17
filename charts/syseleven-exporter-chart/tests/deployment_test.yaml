@@ -9,6 +9,36 @@ set:
     password: "test-password"
 
 tests:
+  - it: should use default ServiceAccount when serviceAccount.create is true
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: spec.template.spec.serviceAccountName
+          value: RELEASE-NAME-syseleven-exporter
+
+  - it: should use custom ServiceAccount name when specified
+    set:
+      serviceAccount:
+        create: true
+        name: "custom-service-account"
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: spec.template.spec.serviceAccountName
+          value: custom-service-account
+
+  - it: should use 'default' ServiceAccount when serviceAccount.create is false
+    set:
+      serviceAccount:
+        create: false
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: spec.template.spec.serviceAccountName
+          value: default
   - it: should render deployment without extraEnv, extraVolumes and extraVolumeMounts
     asserts:
       - isKind:
