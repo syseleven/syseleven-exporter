@@ -121,6 +121,12 @@ podLabels: {}
 
 annotations: {}
 
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+  labels: {}
+
 podSecurityContext:
   runAsNonRoot: true
 

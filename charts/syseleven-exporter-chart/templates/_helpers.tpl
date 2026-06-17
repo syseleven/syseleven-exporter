@@ -56,3 +56,14 @@ Secret name for Openstack Credentials
 {{- define "syseleven-exporter.secret" -}}
     {{ template "syseleven-exporter.fullname" . }}
 {{- end -}}
+
+{{/*
+Create the name of the service account to use
+*/}}
+{{- define "syseleven-exporter.serviceAccountName" -}}
+{{- if .Values.serviceAccount.create }}
+{{- default (include "syseleven-exporter.fullname" .) .Values.serviceAccount.name }}
+{{- else }}
+{{- default "default" .Values.serviceAccount.name }}
+{{- end }}
+{{- end }}

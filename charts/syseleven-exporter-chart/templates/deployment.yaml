@@ -20,6 +20,7 @@ spec:
       annotations:
 {{ toYaml .Values.annotations | indent 8 }}
     spec:
+      serviceAccountName: {{ include "syseleven-exporter.serviceAccountName" . }}
       {{- with .Values.podSecurityContext }}
       securityContext:
       {{- toYaml . | nindent 8 }}
