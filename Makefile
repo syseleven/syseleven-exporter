@@ -5,7 +5,7 @@ REPO        ?= github.com/syseleven/syseleven-exporter
 REVISION    ?= $(shell git rev-parse HEAD)
 VERSION     ?= $(shell git describe --tags)
 
-.PHONY: build release-major release-minor release-patch
+.PHONY: build release-major release-minor release-patch test-chart
 
 build:
 	go build -ldflags "-X ${REPO}/pkg/version.Version=${VERSION} \
@@ -35,3 +35,6 @@ release-patch:
 	git pull
 	git tag -a $(PATCHVERSION) -m 'release $(PATCHVERSION)'
 	git push origin --tags
+
+test-chart:
+	helm unittest charts/syseleven-exporter-chart
