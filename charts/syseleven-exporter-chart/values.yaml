@@ -14,6 +14,32 @@ existingSecret: ~
 exporter:
   args: []
 
+extraEnv: []
+  # - name: MY_VAR
+  #   value: "my-value"
+  # - name: MY_SECRET
+  #   valueFrom:
+  #     secretKeyRef:
+  #       name: my-secret
+  #       key: secret-key
+
+extraVolumes: []
+  # - name: my-config
+  #   configMap:
+  #     name: my-configmap
+  # - name: my-secret-vol
+  #   secret:
+  #     secretName: my-secret
+  # - name: empty-dir
+  #   emptyDir: {}
+
+extraVolumeMounts: []
+  # - name: my-config
+  #   mountPath: /etc/my-config
+  #   readOnly: true
+  # - name: empty-dir
+  #   mountPath: /tmp/cache
+
 service:
   labels: {}
   annotations: {}
