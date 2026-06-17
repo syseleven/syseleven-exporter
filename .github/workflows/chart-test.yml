@@ -1,0 +1,24 @@
+name: Helm Chart Test
+
+on:
+  pull_request:
+    paths:
+      - "charts/**"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+
+      - name: Install Helm Unittest Plugin
+        run: |
+          helm plugin install https://github.com/helm-unittest/helm-unittest.git --verify=false
+
+      - name: Run Helm Unittests
+        run: |
+          helm unittest charts/syseleven-exporter-chart/

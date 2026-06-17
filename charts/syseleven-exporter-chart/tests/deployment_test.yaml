@@ -1,0 +1,115 @@
+# tests/deployment_test.yaml
+
+suite: Test Deployment with extraEnv, extraVolumes and extraVolumeMounts
+templates:
+  - templates/deployment.yaml
+set:
+  openstack:
+    username: "test-user"
+    password: "test-password"
+
+tests:
+  - it: should render deployment without extraEnv, extraVolumes and extraVolumeMounts
+    asserts:
+      - isKind:
+          of: Deployment
+      - notExists:
+          path: spec.template.spec.containers[0].env
+      - notExists:
+          path: spec.template.spec.volumes
+      - notExists:
+          path: spec.template.spec.containers[0].volumeMounts
+
+  - it: should render deployment with extraEnv
+    set:
+      extraEnv:
+        - name: MY_VAR
+          value: "my-value"
+        - name: ANOTHER_VAR
+          value: "another-value"
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: spec.template.spec.containers[0].env
+          value:
+            - name: MY_VAR
+              value: my-value
+            - name: ANOTHER_VAR
+              value: another-value
+
+  - it: should render deployment with extraVolumes
+    set:
+      extraVolumes:
+        - name: my-config
+          configMap:
+            name: my-configmap
+        - name: my-secret-vol
+          secret:
+            secretName: my-secret
+        - name: empty-dir
+          emptyDir: {}
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: spec.template.spec.volumes
+          value:
+            - name: my-config
+              configMap:
+                name: my-configmap
+            - name: my-secret-vol
+              secret:
+                secretName: my-secret
+            - name: empty-dir
+              emptyDir: {}
+
+  - it: should render deployment with extraVolumeMounts
+    set:
+      extraVolumeMounts:
+        - name: my-config
+          mountPath: /etc/my-config
+          readOnly: true
+        - name: empty-dir
+          mountPath: /tmp/cache
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: spec.template.spec.containers[0].volumeMounts
+          value:
+            - name: my-config
+              mountPath: /etc/my-config
+              readOnly: true
+            - name: empty-dir
+              mountPath: /tmp/cache
+
+  - it: should render deployment with extraEnv, extraVolumes and extraVolumeMounts combined
+    set:
+      extraEnv:
+        - name: ENV_VAR
+          value: "env-value"
+      extraVolumes:
+        - name: test-volume
+          emptyDir: {}
+      extraVolumeMounts:
+        - name: test-volume
+          mountPath: /mnt/test
+    asserts:
+      - isKind:
+          of: Deployment
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ENV_VAR
+            value: env-value
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: test-volume
+            emptyDir: {}
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: test-volume
+            mountPath: /mnt/test

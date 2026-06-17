@@ -21,7 +21,7 @@ Now you can install the Chart.
 helm install syseleven-exporter/syseleven-exporter --generate-name
 ```
 
-Add your Openstack credentials to allow *read-only* access to the API-Endpoint `https://api.cloud.syseleven.net:5001`
+Add your Openstack credentials to allow _read-only_ access to the API-Endpoint `https://api.cloud.syseleven.net:5001`
 
 ```bash
 openstack.username
@@ -58,3 +58,21 @@ To see the full list of all options have a look at [Values.yaml](charts/syseleve
 To use a default Grafana Dashboard, you have to enable the `prometheus.dashboards.enabled` flag. Similar to the Rules, you can adjust the Namespace with `prometheus.dashboards.namespace`.
 
 To see the full list of all options have a look at [Values.yaml](charts/syseleven-exporter-chart/values.yaml).
+
+## Development
+
+### Testing
+
+This chart uses [helm-unittest](https://github.com/helm-unittest/helm-unittest) for unit tests.
+
+#### Install Helm Unittest Plugin
+
+```bash
+helm plugin install https://github.com/helm-unittest/helm-unittest
+```
+
+#### Run Tests Locally
+
+```bash
+helm unittest charts/syseleven-exporter-chart
+```
