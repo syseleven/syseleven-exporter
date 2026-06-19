@@ -44,6 +44,7 @@ func MakeRequest(url string, token string, header string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		var apiError Error
@@ -71,7 +72,10 @@ func GetQuotaV3(projectID, token string) (map[string]QuotaV3, error) {
 		endpoint = os.Getenv("SYSELEVEN_QUOTA_API_ENDPOINT")
 	}
 	url := fmt.Sprintf("%s/v3/projects/%s/quota", endpoint, projectID)
-	resp, _ := MakeRequest(url, token, "X-Auth-Token")
+	resp, err := MakeRequest(url, token, "X-Auth-Token")
+	if err != nil {
+		return nil, fmt.Errorf("get quota v3: %w", err)
+	}
 
 	var quotas = make(map[string]QuotaV3)
 
@@ -84,7 +88,10 @@ func GetQuotaV3(projectID, token string) (map[string]QuotaV3, error) {
 
 func GetCurrentUsageV3(projectID, token string) (map[string]CurrentUsageV3, error) {
 	url := fmt.Sprintf("%s/v3/projects/%s/current_usage", endpoint, projectID)
-	resp, _ := MakeRequest(url, token, "X-Auth-Token")
+	resp, err := MakeRequest(url, token, "X-Auth-Token")
+	if err != nil {
+		return nil, fmt.Errorf("get current usage v3: %w", err)
+	}
 
 	var currentUsages = make(map[string]CurrentUsageV3)
 
@@ -105,11 +112,14 @@ func GetQuotaV1(projectID, token string) (map[string]QuotaV1, error) {
 	}
 
 	url := fmt.Sprintf("%s/v1/projects/%s/quota", endpoint, projectID)
-	resp, _ := MakeRequest(url, token, "X-Auth-Token")
+	resp, err := MakeRequest(url, token, "X-Auth-Token")
+	if err != nil {
+		return nil, fmt.Errorf("get quota v1: %w", err)
+	}
 
 	var quotas = make(map[string]QuotaV1)
 
-	err := json.Unmarshal(resp, &quotas)
+	err = json.Unmarshal(resp, &quotas)
 
 	if err != nil {
 		return nil, err
@@ -120,7 +130,10 @@ func GetQuotaV1(projectID, token string) (map[string]QuotaV1, error) {
 
 func GetCurrentUsageV1(projectID, token string) (map[string]CurrentUsageV1, error) {
 	url := fmt.Sprintf("%s/v1/projects/%s/current_usage", endpoint, projectID)
-	resp, _ := MakeRequest(url, token, "X-Auth-Token")
+	resp, err := MakeRequest(url, token, "X-Auth-Token")
+	if err != nil {
+		return nil, fmt.Errorf("get current usage v1: %w", err)
+	}
 
 	var currentUsages = make(map[string]CurrentUsageV1)
 
@@ -146,7 +159,10 @@ func GetS3InfoNCS(projectID string) ([]S3UsageNCS, error) {
 	s3Usage := []S3UsageNCS{}
 	for _, t := range s3Users {
 		url := fmt.Sprintf("%s/v3/orgs/%s/projects/%s/s3-users/%s/quota", endpointIam, orgID, projectID, t.Id)
-		resp, _ := MakeRequest(url, secret, "X-S11-CREDENTIAL")
+		resp, err := MakeRequest(url, secret, "X-S11-CREDENTIAL")
+		if err != nil {
+			return nil, fmt.Errorf("get s3 info ncs user %s: %w", t.Id, err)
+		}
 
 		var currentUsage S3InfoNCS
 
@@ -160,10 +176,13 @@ func GetS3InfoNCS(projectID string) ([]S3UsageNCS, error) {
 
 func GetS3Users(orgID, projectID, secret string) ([]S3UsersNCS, error) {
 	url := fmt.Sprintf("%s/v3/orgs/%s/projects/%s/s3-users", endpointIam, orgID, projectID)
-	resp, _ := MakeRequest(url, secret, "X-S11-CREDENTIAL")
+	resp, err := MakeRequest(url, secret, "X-S11-CREDENTIAL")
+	if err != nil {
+		return nil, fmt.Errorf("get s3 users: %w", err)
+	}
 
 	var s3users []S3UsersNCS
-	err := json.Unmarshal(resp, &s3users)
+	err = json.Unmarshal(resp, &s3users)
 
 	return s3users, err
 }
