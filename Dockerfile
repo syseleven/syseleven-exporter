@@ -17,7 +17,7 @@ LABEL maintainer="SysEleven GmbH"
 LABEL git.url="https://github.com/syseleven/syseleven-exporter"
 
 RUN apk add --no-cache --update curl ca-certificates
-HEALTHCHECK --interval=10s --timeout=3s --retries=3 CMD curl --fail http://localhost:8080/_health || exit 1
+HEALTHCHECK --interval=10s --timeout=3s --retries=3 CMD curl --fail http://localhost:8080/health || exit 1
 
 USER nobody
 
