@@ -3,10 +3,15 @@
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
+    kubenix.url = "github:hall/kubenix";
   };
 
   outputs =
-    { self, nixpkgs }:
+    {
+      self,
+      nixpkgs,
+      kubenix,
+    }:
     let
       supportedSystems = [
         "x86_64-linux"
@@ -55,6 +60,69 @@
           doCheck = false;
         };
 
+      k8s =
+        let
+          name = "syseleven-exporter";
+        in
+        {
+          existingSecret ? "",
+          namespace ? "syseleven-exporter",
+          rulesEnabled ? false,
+          dashboardEnabled ? false,
+          openstack ? {
+            username = "";
+            password = "";
+            projectId = "";
+            application_credential_id = "";
+            application_credential_secret = "";
+            iam_org_id = "";
+          },
+        }:
+        (kubenix.evalModules.${system} {
+          module =
+            { kubenix, ... }:
+            {
+              imports = [ kubenix.modules.helm ];
+              kubernetes = {
+                customTypes = {
+                  "servicemonitor" = {
+                    version = "v1";
+                    attrName = "servicemonitor";
+                    group = "monitoring.coreos.com";
+                    kind = "ServiceMonitor";
+                  };
+                };
+                helm.releases.syseleven-exporter = {
+                  inherit namespace;
+                  chart = pkgs.runCommand name { } ''
+                    mkdir $out
+                    cp -r ${./charts/syseleven-exporter-chart}/* $out
+                  '';
+                  values = {
+                    inherit openstack;
+                    existingSecret = existingSecret;
+                    exporter = {
+                      args = [
+                        "--api-version"
+                        "v3"
+                      ];
+                    };
+                    prometheus = {
+                      serviceMonitor = {
+                        enabled = true;
+                      };
+                      rules = {
+                        enabled = rulesEnabled;
+                      };
+                      dashboards = {
+                        enabled = dashboardEnabled;
+                      };
+                    };
+                  };
+                };
+              };
+            };
+        }).config.kubernetes.resultYAML;
       oci =
         {
           name ? "syseleven-exporter",
@@ -80,6 +148,7 @@
         default = pkgs.callPackage bin { };
         bin = pkgs.callPackage bin { };
         oci = pkgs.callPackage oci { };
+        k8s = pkgs.callPackage k8s { };
       };
 
       devShells.${system} = {
