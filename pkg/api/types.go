@@ -147,14 +147,15 @@ type S3UsersNCS struct {
 	Description string `json:"description"`
 }
 type S3InfoNCS struct {
-	SizeKB     float64 `json:"size_kb"`
-	Size       float64 `json:"size"`
-	MaxSizeKB  float64 `json:"max_size_kb"`
-	MaxSize    float64 `json:"max_size"`
-	NumObjects float64 `json:"num_objects"`
-	MaxObjects float64 `json:"max_objects"`
-	Enabled    bool    `json:"enabled"`
-	CheckOnRaw bool    `json:"check_on_raw"`
+	SizeKB           float64 `json:"size_kb"`
+	Size             float64 `json:"size"`
+	MaxSizeKB        float64 `json:"max_size_kb"`
+	MaxSize          float64 `json:"max_size"`
+	NumObjects       float64 `json:"num_objects"`
+	MaxObjectsUser   float64 `json:"max_objects_user_quota"`
+	MaxObjectsBucket float64 `json:"max_objects_bucket_quota"`
+	Enabled          bool    `json:"enabled"`
+	CheckOnRaw       bool    `json:"check_on_raw"`
 }
 
 type S3UsageNCS struct {

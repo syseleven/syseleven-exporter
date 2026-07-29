@@ -112,7 +112,8 @@ docker pull syseleven/syseleven-exporter:<TAG>
 | syseleven_s3_space_max_bytes_ncs | Quota for S3 space in ncs regions in bytes |
 | syseleven_s3_space_used_bytes_ncs | Used S3 space in ncs regions in bytes |
 | syseleven_s3_num_objects_ncs | Number of objects stored in S3 |
-| syseleven_s3_max_objects_ncs | Maximal number of objects stored in S3 |
+| syseleven_s3_max_objects_ncs | Maximal number of objects stored in S3 per user quota |
+| syseleven_s3_max_objects_bucket_ncs | Maximal number of objects stored in S3 per bucket quota |
 | syseleven_s3_enabled_ncs | Checks if s3 space is enabled for user or not |
 | syseleven_s3_check_enabled_ncs | Checks if check on raw is enabled for user or not |
 | syseleven_volume_space_total_gigabytes | Quota for volume space per `region` and `project` in gigabytes |
