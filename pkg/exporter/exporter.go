@@ -161,11 +161,13 @@ func SetS3Info(s3infoncs []api.S3UsageNCS, exporter *Exporter) {
 	s3CheckEnabledNcs.Reset()
 	s3NumObjectsNcs.Reset()
 	s3MaxObjectsNcs.Reset()
+	s3MaxObjectsBucketNcs.Reset()
 	for _, v := range s3infoncs {
 		s3SpaceMaxBytesNcs.With(prometheus.Labels{"project": exporter.ProjectID, "s3username": v.Name, "description": v.Description}).Set(v.MaxSize)
 		s3SpaceUsedBytesNcs.With(prometheus.Labels{"project": exporter.ProjectID, "s3username": v.Name, "description": v.Description}).Set(v.Size)
 		s3NumObjectsNcs.With(prometheus.Labels{"project": exporter.ProjectID, "s3username": v.Name, "description": v.Description}).Set(v.NumObjects)
-		s3MaxObjectsNcs.With(prometheus.Labels{"project": exporter.ProjectID, "s3username": v.Name, "description": v.Description}).Set(v.MaxObjects)
+		s3MaxObjectsNcs.With(prometheus.Labels{"project": exporter.ProjectID, "s3username": v.Name, "description": v.Description}).Set(v.MaxObjectsUser)
+		s3MaxObjectsBucketNcs.With(prometheus.Labels{"project": exporter.ProjectID, "s3username": v.Name, "description": v.Description}).Set(v.MaxObjectsBucket)
 		if v.Enabled {
 			s3EnabledNcs.With(prometheus.Labels{"project": exporter.ProjectID, "s3username": v.Name, "description": v.Description}).Set(1)
 		} else {

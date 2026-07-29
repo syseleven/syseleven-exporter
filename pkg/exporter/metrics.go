@@ -147,7 +147,13 @@ var (
 	s3MaxObjectsNcs = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "s3_max_objects_ncs",
-		Help:      "Maximal number of objects stored in S3",
+		Help:      "Maximal number of objects stored in S3 per user quota",
+	}, []string{"project", "s3username", "description"})
+
+	s3MaxObjectsBucketNcs = promauto.NewGaugeVec(prometheus.GaugeOpts{
+		Namespace: namespace,
+		Name:      "s3_max_objects_bucket_ncs",
+		Help:      "Maximal number of objects stored in S3 per bucket quota",
 	}, []string{"project", "s3username", "description"})
 
 	volumeSpaceTotalGigabytes = promauto.NewGaugeVec(prometheus.GaugeOpts{
