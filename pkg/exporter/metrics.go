@@ -23,160 +23,171 @@ import (
 
 const namespace = "syseleven"
 
+// Prometheus label names shared between the metric definitions and the
+// exporter's label sets.
+const (
+	labelProject     = "project"
+	labelRegion      = "region"
+	labelType        = "type"
+	labelFlavor      = "flavor"
+	labelDescription = "description"
+	labelS3Username  = "s3username"
+)
+
 var (
 	computeCoresTotal = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "compute_cores_total",
 		Help:      "Quota for number of compute cores per region and project",
-	}, []string{"region", "project"})
+	}, []string{labelRegion, labelProject})
 
 	computeCoresUsed = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "compute_cores_used",
 		Help:      "Number of used compute cores per region and project",
-	}, []string{"region", "project"})
+	}, []string{labelRegion, labelProject})
 
 	computeInstancesTotal = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "compute_instances_total",
 		Help:      "Quota for number of compute instances per region and project",
-	}, []string{"region", "project"})
+	}, []string{labelRegion, labelProject})
 
 	computeInstancesUsed = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "compute_instances_used",
 		Help:      "Number of used compute instances per region and project",
-	}, []string{"region", "project"})
+	}, []string{labelRegion, labelProject})
 
 	computeFlavorsUsed = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "compute_flavors_used",
 		Help:      "Number of used compute flavors per type and region and project",
-	}, []string{"region", "project", "flavor"})
+	}, []string{labelRegion, labelProject, labelFlavor})
 
-	computeRamTotalMegabytes = promauto.NewGaugeVec(prometheus.GaugeOpts{
+	computeRAMTotalMegabytes = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "compute_ram_total_megabytes",
 		Help:      "Quota for ram per region and project in megabytes",
-	}, []string{"region", "project"})
+	}, []string{labelRegion, labelProject})
 
-	computeRamUsedMegabytes = promauto.NewGaugeVec(prometheus.GaugeOpts{
+	computeRAMUsedMegabytes = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "compute_ram_used_megabytes",
 		Help:      "Used ram per region and project in megabytes",
-	}, []string{"region", "project"})
+	}, []string{labelRegion, labelProject})
 
 	dnsZonesTotal = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "dns_zones_total",
 		Help:      "Quota for number of DNS zones per region and project",
-	}, []string{"region", "project"})
+	}, []string{labelRegion, labelProject})
 
 	dnsZonesUsed = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "dns_zones_used",
 		Help:      "Number of used DNS zones per region and project",
-	}, []string{"region", "project"})
+	}, []string{labelRegion, labelProject})
 
 	networkFloatingIPsTotal = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "network_floating_ips_total",
 		Help:      "Quota for number of floating IPs per region and project",
-	}, []string{"region", "project"})
+	}, []string{labelRegion, labelProject})
 
 	networkFloatingIPsUsed = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "network_floating_ips_used",
 		Help:      "Number of used floating IPs per region and project",
-	}, []string{"region", "project"})
+	}, []string{labelRegion, labelProject})
 
 	networkLoadbalancersTotal = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "network_loadbalancers_total",
 		Help:      "Quota for number of load balancers per region and project",
-	}, []string{"region", "project"})
+	}, []string{labelRegion, labelProject})
 
 	networkLoadbalancersUsed = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "network_loadbalancers_used",
 		Help:      "Number of used load balancers per region and project",
-	}, []string{"region", "project"})
+	}, []string{labelRegion, labelProject})
 
 	s3SpaceTotalBytes = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "s3_space_total_bytes",
 		Help:      "Quota for S3 space per region and project in bytes",
-	}, []string{"region", "project", "type"})
+	}, []string{labelRegion, labelProject, labelType})
 
 	s3SpaceUsedBytes = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "s3_space_used_bytes",
 		Help:      "Used S3 space per region and project in bytes",
-	}, []string{"region", "project", "type"})
+	}, []string{labelRegion, labelProject, labelType})
 
 	s3SpaceMaxBytesNcs = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "s3_space_max_bytes_ncs",
 		Help:      "Quota for S3 space in ncs regions in bytes",
-	}, []string{"project", "s3username", "description"})
+	}, []string{labelProject, labelS3Username, labelDescription})
 
 	s3SpaceUsedBytesNcs = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "s3_space_used_bytes_ncs",
 		Help:      "Used S3 space in ncs regions in bytes",
-	}, []string{"project", "s3username", "description"})
+	}, []string{labelProject, labelS3Username, labelDescription})
 
 	s3EnabledNcs = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "s3_enabled_ncs",
 		Help:      "Checks if s3 space is enabled for user or not",
-	}, []string{"project", "s3username", "description"})
+	}, []string{labelProject, labelS3Username, labelDescription})
 
 	s3CheckEnabledNcs = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "s3_check_enabled_ncs",
 		Help:      "Checks if check on raw is enabled for user or not",
-	}, []string{"project", "s3username", "description"})
+	}, []string{labelProject, labelS3Username, labelDescription})
 
 	s3NumObjectsNcs = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "s3_num_objects_ncs",
 		Help:      "Number of objects stored in S3",
-	}, []string{"project", "s3username", "description"})
+	}, []string{labelProject, labelS3Username, labelDescription})
 
 	s3MaxObjectsNcs = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "s3_max_objects_ncs",
 		Help:      "Maximal number of objects stored in S3 per user quota",
-	}, []string{"project", "s3username", "description"})
+	}, []string{labelProject, labelS3Username, labelDescription})
 
 	s3MaxObjectsBucketNcs = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "s3_max_objects_bucket_ncs",
 		Help:      "Maximal number of objects stored in S3 per bucket quota",
-	}, []string{"project", "s3username", "description"})
+	}, []string{labelProject, labelS3Username, labelDescription})
 
 	volumeSpaceTotalGigabytes = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "volume_space_total_gigabytes",
 		Help:      "Quota for volume space per region and project in gigabytes",
-	}, []string{"region", "project"})
+	}, []string{labelRegion, labelProject})
 
 	volumeSpaceUsedGigabytes = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "volume_space_used_gigabytes",
 		Help:      "Number of used volume space per region and project in gigabytes",
-	}, []string{"region", "project"})
+	}, []string{labelRegion, labelProject})
 
 	volumeVolumesTotalGigabytes = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "volume_volumes_total",
 		Help:      "Quota for number of volumes per region and project",
-	}, []string{"region", "project"})
+	}, []string{labelRegion, labelProject})
 
 	volumeVolumesUsedGigabytes = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "volume_volumes_used",
 		Help:      "Number of used volumes per region and project",
-	}, []string{"region", "project"})
+	}, []string{labelRegion, labelProject})
 )

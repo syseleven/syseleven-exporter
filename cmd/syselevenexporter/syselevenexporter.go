@@ -15,6 +15,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -23,14 +24,19 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/syseleven/syseleven-exporter/pkg/auth"
-	"github.com/syseleven/syseleven-exporter/pkg/exporter"
-	"github.com/syseleven/syseleven-exporter/pkg/version"
-
 	"github.com/go-chi/chi/v5"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/syseleven/syseleven-exporter/pkg/auth"
+	"github.com/syseleven/syseleven-exporter/pkg/exporter"
+	"github.com/syseleven/syseleven-exporter/pkg/version"
+)
+
+const (
+	defaultIntervalSeconds = 3600
+	shutdownTimeout        = 5 * time.Second
+	readHeaderTimeout      = 10 * time.Second
 )
 
 var (
@@ -48,7 +54,7 @@ var rootCmd = &cobra.Command{
 	Use:   "SysEleven Exporter",
 	Short: "SysEleven Exporter - export Prometheus metrics for SysEleven.",
 	Long:  "SysEleven Exporter - export Prometheus metrics for SysEleven.",
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, _ []string) {
 		if logOutput == "json" {
 			log.SetFormatter(&log.JSONFormatter{})
 		} else {
@@ -56,10 +62,12 @@ var rootCmd = &cobra.Command{
 		}
 
 		log.SetReportCaller(true)
+
 		lvl, err := log.ParseLevel(logLevel)
 		if err != nil {
 			log.WithError(err).Fatal("Could not set log level")
 		}
+
 		log.SetLevel(lvl)
 
 		log.Info(version.Info())
@@ -71,11 +79,14 @@ var rootCmd = &cobra.Command{
 			if len(os.Getenv("OS_APPLICATION_CREDENTIAL_SECRET")) == 0 || len(os.Getenv("OS_APPLICATION_CREDENTIAL_ID")) == 0 {
 				log.Fatalf("Fetching S3 stats from NCS only works with AppCredentials.Please set OS_APPLICATION_CREDENTIAL_SECRET and OS_APPLICATION_CREDENTIAL_ID!")
 			}
+
 			if !strings.HasPrefix(os.Getenv("OS_APPLICATION_CREDENTIAL_SECRET"), "s11_orgsa_") {
 				log.Fatalf("OS_APPLICATION_CREDENTIAL_SECRET must start with 's11_orgsa_' in order to gather s3 stats from ncs!")
 			}
+
 			s3StatsNCS = true
 		}
+
 		if os.Getenv("OS_APPLICATION_CREDENTIAL_ID") == "" || os.Getenv("OS_APPLICATION_CREDENTIAL_SECRET") == "" {
 			useAppCreds = false
 
@@ -97,6 +108,7 @@ var rootCmd = &cobra.Command{
 					if err != nil {
 						log.WithError(err).Fatal("Could not create exporter")
 					}
+
 					go exporter.Run(interval, apiVersion, s3StatsNCS, exp)
 				}(projectID)
 			}
@@ -116,16 +128,17 @@ var rootCmd = &cobra.Command{
 			if err != nil {
 				log.WithError(err).Fatal("Could not create exporter")
 			}
+
 			go exporter.Run(interval, apiVersion, s3StatsNCS, exp)
 		}
 
 		router := chi.NewRouter()
-		router.Get("/health", func(w http.ResponseWriter, r *http.Request) {
+		router.Get("/health", func(w http.ResponseWriter, _ *http.Request) {
 			if _, err := fmt.Fprintf(w, "OK"); err != nil {
 				log.Error(err)
 			}
 		})
-		router.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		router.Get("/", func(w http.ResponseWriter, _ *http.Request) {
 			if _, err := w.Write([]byte(`<html>
 			<head><title>SysEleven Exporter</title></head>
 			<body>
@@ -145,13 +158,13 @@ var rootCmd = &cobra.Command{
 			</html>`)); err != nil {
 				log.Error(err)
 			}
-
 		})
 		router.Mount(metricsPath, promhttp.Handler())
 
 		server := &http.Server{
-			Addr:    listenAddress,
-			Handler: router,
+			Addr:              listenAddress,
+			Handler:           router,
+			ReadHeaderTimeout: readHeaderTimeout,
 		}
 
 		// Listen for SIGINT and SIGTERM signals and try to gracefully shutdown
@@ -162,7 +175,8 @@ var rootCmd = &cobra.Command{
 			signal.Notify(term, os.Interrupt, syscall.SIGTERM)
 
 			<-term
-			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+
+			ctx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
 			defer cancel()
 
 			err := server.Shutdown(ctx)
@@ -176,7 +190,7 @@ var rootCmd = &cobra.Command{
 
 		log.Infof("Server listen on: %s", listenAddress)
 
-		if err := server.ListenAndServe(); err != http.ErrServerClosed {
+		if err := server.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
 			log.WithError(err).Fatal("HTTP server died unexpected")
 		}
 	},
@@ -186,7 +200,7 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Print version information for SysEleven Exporter.",
 	Long:  "Print version information for SysEleven Exporter.",
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, _ []string) {
 		v, err := version.Print("SysEleven Exporter")
 		if err != nil {
 			log.WithError(err).Fatal("Failed to print version information")
@@ -201,7 +215,7 @@ var versionCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(versionCmd)
 
-	rootCmd.PersistentFlags().Int64Var(&interval, "interval", 3600, "Set interval for fetching the resource quota and usage.")
+	rootCmd.PersistentFlags().Int64Var(&interval, "interval", defaultIntervalSeconds, "Set interval for fetching the resource quota and usage.")
 	rootCmd.PersistentFlags().StringVar(&logLevel, "log.level", "info", "Set the log level. Must be one of the follwing values: trace, debug, info, warn, error, fatal or panic.")
 	rootCmd.PersistentFlags().StringVar(&logOutput, "log.output", "plain", "Set the output format of the log line. Must be plain or json.")
 	rootCmd.PersistentFlags().StringVar(&listenAddress, "web.listen-address", ":8080", "Address to listen on for web interface and telemetry.")
