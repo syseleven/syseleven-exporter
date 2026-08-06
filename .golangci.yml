@@ -1,0 +1,77 @@
+version: "2"
+run:
+  allow-serial-runners: true
+linters:
+  default: all
+  disable:
+    - copyloopvar
+    - depguard
+    - exhaustruct
+    - gomoddirectives
+    - intrange
+    - nolintlint
+    - tagliatelle
+    - varnamelen
+    - wsl
+    - noinlineerr
+    - godoclint
+    - modernize
+  settings:
+    cyclop:
+      max-complexity: 20
+    funlen:
+      lines: 200
+      statements: 120
+    gosec:
+      excludes:
+        - G101
+    lll:
+      line-length: 180
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      - linters:
+          - cyclop
+          - errcheck
+          - funlen
+          - gocognit
+          - gocyclo
+          - gosec
+          - lll
+          - nestif
+          - paralleltest
+          - wrapcheck
+          - noinlineerr
+          - forcetypeassert
+        path: _test\.go
+      # promlinter is excluded on purpose (agreed in #114): fixing its findings
+      # means renaming customer-facing metrics (gauge *_total, megabyte/gigabyte
+      # units), which would break existing dashboards and alerts. The rename is
+      # planned as a breaking change with a migration guide, tracked in the
+      # follow-up issue.  TODO(#114): replace with follow-up issue number.
+      - linters:
+          - promlinter
+        path: ^pkg/exporter/metrics\.go$
+    paths:
+      - pkg/grpc
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  enable:
+    - gci
+    - gofmt
+    - gofumpt
+    - goimports
+  exclusions:
+    generated: lax
+    paths:
+      - pkg/grpc
+      - third_party$
+      - builtin$
+      - examples$
