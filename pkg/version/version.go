@@ -24,7 +24,13 @@ import (
 	"text/template"
 )
 
-// Build information. Populated at build-time.
+// Version, Revision, Branch, BuildUser and BuildDate are populated at build
+// time via -ldflags -X (see Makefile), which can only target package-level
+// variables, so they cannot move into a function scope. GoVersion is
+// runtime-derived but kept package-level as part of the same exported
+// version-info surface.
+//
+//nolint:gochecknoglobals
 var (
 	Version   string
 	Revision  string
@@ -34,16 +40,16 @@ var (
 	GoVersion = runtime.Version()
 )
 
-// versionInfoTmpl contains the template used by Print.
-var versionInfoTmpl = `
+// Print returns version information.
+func Print(program string) (string, error) {
+	// versionInfoTmpl contains the template used by Print.
+	const versionInfoTmpl = `
 {{.program}}, version {{.version}} (branch: {{.branch}}, revision: {{.revision}})
   build user:       {{.buildUser}}
   build date:       {{.buildDate}}
   go version:       {{.goVersion}}
 `
 
-// Print returns version information.
-func Print(program string) (string, error) {
 	m := map[string]string{
 		"program":   program,
 		"version":   Version,
@@ -53,15 +59,17 @@ func Print(program string) (string, error) {
 		"buildDate": BuildDate,
 		"goVersion": GoVersion,
 	}
+
 	t, err := template.New("version").Parse(versionInfoTmpl)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("parse version template: %w", err)
 	}
 
 	var buf bytes.Buffer
 	if err := t.ExecuteTemplate(&buf, "version", m); err != nil {
-		return "", err
+		return "", fmt.Errorf("execute version template: %w", err)
 	}
+
 	return strings.TrimSpace(buf.String()), nil
 }
 

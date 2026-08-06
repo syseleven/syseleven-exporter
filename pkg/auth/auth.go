@@ -18,6 +18,7 @@ package auth
 
 import (
 	"errors"
+	"fmt"
 	"os"
 
 	"github.com/gophercloud/gophercloud"
@@ -25,83 +26,89 @@ import (
 	"github.com/gophercloud/gophercloud/openstack/identity/v3/tokens"
 )
 
-func GetToken(projectID, username, password string) (string, error) {
-	//Check wether IdentityEndpoint is set via env config or standard needs to be used
-	var identityEndpoint string
-	if os.Getenv("OS_AUTH_URL") == "" {
-		identityEndpoint = "https://keystone.cloud.syseleven.net:5000/v3"
-	} else {
-		identityEndpoint = os.Getenv("OS_AUTH_URL")
+const (
+	defaultIdentityEndpoint = "https://keystone.cloud.syseleven.net:5000/v3"
+	defaultDomainName       = "Default"
+)
+
+var (
+	// ErrNoAuthResult is returned when the provider client holds no auth result,
+	// e.g. because the token was set manually with ProviderClient.SetToken().
+	ErrNoAuthResult = errors.New("no AuthResult available")
+	// ErrUnexpectedAuthResult is returned when the auth result has an unexpected type.
+	ErrUnexpectedAuthResult = errors.New("unexpected AuthResult type")
+)
+
+// identityEndpoint returns the Keystone endpoint from OS_AUTH_URL, falling back
+// to the SysEleven default.
+func identityEndpoint() string {
+	if v := os.Getenv("OS_AUTH_URL"); v != "" {
+		return v
 	}
 
+	return defaultIdentityEndpoint
+}
+
+func GetToken(projectID, username, password string) (string, error) {
 	opts := gophercloud.AuthOptions{
-		IdentityEndpoint: identityEndpoint,
+		IdentityEndpoint: identityEndpoint(),
 		Username:         username,
 		Password:         password,
-		DomainName:       "Default",
+		DomainName:       defaultDomainName,
 		TenantID:         projectID,
 	}
 
 	provider, err := openstack.AuthenticatedClient(opts)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("authenticate: %w", err)
 	}
 
 	return provider.Token(), nil
 }
 
-func GetTokenAppCreds(projectID, applicationCredentialID, applicationCredentialSecret string) (string, error) {
-	//Check wether IdentityEndpoint is set via env config or standard needs to be used
-	var identityEndpoint string
-	if os.Getenv("OS_AUTH_URL") == "" {
-		identityEndpoint = "https://keystone.cloud.syseleven.net:5000/v3"
-	} else {
-		identityEndpoint = os.Getenv("OS_AUTH_URL")
-	}
-
+func GetTokenAppCreds(_, applicationCredentialID, applicationCredentialSecret string) (string, error) {
 	opts := gophercloud.AuthOptions{
-		IdentityEndpoint:            identityEndpoint,
+		IdentityEndpoint:            identityEndpoint(),
 		ApplicationCredentialID:     applicationCredentialID,
 		ApplicationCredentialSecret: applicationCredentialSecret,
-		DomainName:                  "Default",
+		DomainName:                  defaultDomainName,
 	}
 
 	provider, err := openstack.AuthenticatedClient(opts)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("authenticate: %w", err)
 	}
 
 	return provider.Token(), nil
 }
 
 func GetProject(applicationCredentialID, applicationCredentialSecret string) (*tokens.Project, error) {
-	//Check wether IdentityEndpoint is set via env config or standard needs to be used
-	var identityEndpoint string
-	if os.Getenv("OS_AUTH_URL") == "" {
-		identityEndpoint = "https://keystone.cloud.syseleven.net:5000/v3"
-	} else {
-		identityEndpoint = os.Getenv("OS_AUTH_URL")
-	}
-
 	opts := gophercloud.AuthOptions{
-		IdentityEndpoint:            identityEndpoint,
+		IdentityEndpoint:            identityEndpoint(),
 		ApplicationCredentialID:     applicationCredentialID,
 		ApplicationCredentialSecret: applicationCredentialSecret,
-		DomainName:                  "Default",
+		DomainName:                  defaultDomainName,
 	}
 
 	provider, err := openstack.AuthenticatedClient(opts)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("authenticate: %w", err)
 	}
 
 	r := provider.GetAuthResult()
 	if r == nil {
-		//ProviderClient did not use openstack.Authenticate(), e.g. because token
-		//was set manually with ProviderClient.SetToken()
-		return nil, errors.New("no AuthResult available")
+		return nil, ErrNoAuthResult
 	}
 
-	result := r.(tokens.CreateResult)
-	return result.ExtractProject()
+	result, ok := r.(tokens.CreateResult)
+	if !ok {
+		return nil, fmt.Errorf("%w: %T", ErrUnexpectedAuthResult, r)
+	}
+
+	project, err := result.ExtractProject()
+	if err != nil {
+		return nil, fmt.Errorf("extract project: %w", err)
+	}
+
+	return project, nil
 }

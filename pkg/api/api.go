@@ -17,12 +17,23 @@ limitations under the License.
 package api
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 )
+
+const (
+	defaultQuotaEndpoint = "https://api.cloud.syseleven.net:5001"
+	defaultIamEndpoint   = "https://iam.apis.syseleven.de"
+)
+
+// ErrUnsupportedURLScheme is returned when a request URL does not use http or https.
+var ErrUnsupportedURLScheme = errors.New("unsupported URL scheme")
 
 type Error struct {
 	Detail string `json:"detail"`
@@ -30,19 +41,55 @@ type Error struct {
 	Type   string `json:"type"`
 }
 
-var endpoint string
-var endpointIam string
+// Error implements the error interface, preserving the upstream API error format.
+func (e Error) Error() string {
+	return fmt.Sprintf("%s: %s (%s)", e.Title, e.Detail, e.Type)
+}
 
-func MakeRequest(url string, token string, header string) ([]byte, error) {
-	req, err := http.NewRequest("GET", url, nil)
+// quotaEndpoint returns the quota API endpoint from SYSELEVEN_QUOTA_API_ENDPOINT,
+// falling back to the SysEleven default.
+func quotaEndpoint() string {
+	if v := os.Getenv("SYSELEVEN_QUOTA_API_ENDPOINT"); v != "" {
+		return v
+	}
+
+	return defaultQuotaEndpoint
+}
+
+// iamEndpoint returns the IAM API endpoint from SYSELEVEN_IAM_API_ENDPOINT,
+// falling back to the SysEleven default.
+func iamEndpoint() string {
+	if v := os.Getenv("SYSELEVEN_IAM_API_ENDPOINT"); v != "" {
+		return v
+	}
+
+	return defaultIamEndpoint
+}
+
+func MakeRequest(rawURL string, token string, header string) ([]byte, error) {
+	parsed, err := url.Parse(rawURL)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("parse request url: %w", err)
+	}
+
+	if parsed.Scheme != "http" && parsed.Scheme != "https" {
+		return nil, fmt.Errorf("%w: %q", ErrUnsupportedURLScheme, parsed.Scheme)
+	}
+
+	// The URL host intentionally comes from operator-set environment
+	// configuration (SYSELEVEN_QUOTA_API_ENDPOINT / SYSELEVEN_IAM_API_ENDPOINT),
+	// never from request input, and the scheme is validated above — not an SSRF
+	// vector.
+	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, parsed.String(), nil) //nolint:gosec // G704: see above
+	if err != nil {
+		return nil, fmt.Errorf("create request: %w", err)
 	}
 
 	req.Header.Set(header, token)
-	resp, err := http.DefaultClient.Do(req)
+
+	resp, err := http.DefaultClient.Do(req) //nolint:gosec // G704: see above
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("do request: %w", err)
 	}
 	defer resp.Body.Close()
 
@@ -51,52 +98,51 @@ func MakeRequest(url string, token string, header string) ([]byte, error) {
 
 		err = json.NewDecoder(resp.Body).Decode(&apiError)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("decode api error: %w", err)
 		}
 
-		return nil, fmt.Errorf("%s: %s (%s)", apiError.Title, apiError.Detail, apiError.Type)
+		return nil, apiError
 	}
+
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("read response body: %w", err)
 	}
+
 	return body, nil
 }
 
 // use API v3 for Quota and Usage Information
 
 func GetQuotaV3(projectID, token string) (map[string]QuotaV3, error) {
-	if os.Getenv("SYSELEVEN_QUOTA_API_ENDPOINT") == "" {
-		endpoint = "https://api.cloud.syseleven.net:5001"
-	} else {
-		endpoint = os.Getenv("SYSELEVEN_QUOTA_API_ENDPOINT")
-	}
-	url := fmt.Sprintf("%s/v3/projects/%s/quota", endpoint, projectID)
-	resp, err := MakeRequest(url, token, "X-Auth-Token")
+	requestURL := fmt.Sprintf("%s/v3/projects/%s/quota", quotaEndpoint(), projectID)
+
+	resp, err := MakeRequest(requestURL, token, "X-Auth-Token")
 	if err != nil {
 		return nil, fmt.Errorf("get quota v3: %w", err)
 	}
 
-	var quotas = make(map[string]QuotaV3)
+	quotas := make(map[string]QuotaV3)
 
 	if err := json.Unmarshal(resp, &quotas); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("unmarshal quota v3: %w", err)
 	}
 
 	return quotas, nil
 }
 
 func GetCurrentUsageV3(projectID, token string) (map[string]CurrentUsageV3, error) {
-	url := fmt.Sprintf("%s/v3/projects/%s/current_usage", endpoint, projectID)
-	resp, err := MakeRequest(url, token, "X-Auth-Token")
+	requestURL := fmt.Sprintf("%s/v3/projects/%s/current_usage", quotaEndpoint(), projectID)
+
+	resp, err := MakeRequest(requestURL, token, "X-Auth-Token")
 	if err != nil {
 		return nil, fmt.Errorf("get current usage v3: %w", err)
 	}
 
-	var currentUsages = make(map[string]CurrentUsageV3)
+	currentUsages := make(map[string]CurrentUsageV3)
 
 	if err := json.Unmarshal(resp, &currentUsages); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("unmarshal current usage v3: %w", err)
 	}
 
 	return currentUsages, nil
@@ -105,84 +151,84 @@ func GetCurrentUsageV3(projectID, token string) (map[string]CurrentUsageV3, erro
 // use API v3 for Quota and Usage Information
 
 func GetQuotaV1(projectID, token string) (map[string]QuotaV1, error) {
-	if os.Getenv("SYSELEVEN_QUOTA_API_ENDPOINT") == "" {
-		endpoint = "https://api.cloud.syseleven.net:5001"
-	} else {
-		endpoint = os.Getenv("SYSELEVEN_QUOTA_API_ENDPOINT")
-	}
+	requestURL := fmt.Sprintf("%s/v1/projects/%s/quota", quotaEndpoint(), projectID)
 
-	url := fmt.Sprintf("%s/v1/projects/%s/quota", endpoint, projectID)
-	resp, err := MakeRequest(url, token, "X-Auth-Token")
+	resp, err := MakeRequest(requestURL, token, "X-Auth-Token")
 	if err != nil {
 		return nil, fmt.Errorf("get quota v1: %w", err)
 	}
 
-	var quotas = make(map[string]QuotaV1)
+	quotas := make(map[string]QuotaV1)
 
 	err = json.Unmarshal(resp, &quotas)
-
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("unmarshal quota v1: %w", err)
 	}
 
 	return quotas, nil
 }
 
 func GetCurrentUsageV1(projectID, token string) (map[string]CurrentUsageV1, error) {
-	url := fmt.Sprintf("%s/v1/projects/%s/current_usage", endpoint, projectID)
-	resp, err := MakeRequest(url, token, "X-Auth-Token")
+	requestURL := fmt.Sprintf("%s/v1/projects/%s/current_usage", quotaEndpoint(), projectID)
+
+	resp, err := MakeRequest(requestURL, token, "X-Auth-Token")
 	if err != nil {
 		return nil, fmt.Errorf("get current usage v1: %w", err)
 	}
 
-	var currentUsages = make(map[string]CurrentUsageV1)
+	currentUsages := make(map[string]CurrentUsageV1)
 
 	if err := json.Unmarshal(resp, &currentUsages); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("unmarshal current usage v1: %w", err)
 	}
 
 	return currentUsages, nil
 }
 
 func GetS3InfoNCS(projectID string) ([]S3UsageNCS, error) {
-	endpointIam = "https://iam.apis.syseleven.de"
-	if len(os.Getenv("SYSELEVEN_IAM_API_ENDPOINT")) > 0 {
-		endpointIam = os.Getenv("SYSELEVEN_IAM_API_ENDPOINT")
-	}
-
 	orgID := os.Getenv("IAM_ORG_ID")
 	secret := os.Getenv("OS_APPLICATION_CREDENTIAL_SECRET")
+
 	s3Users, err := GetS3Users(orgID, projectID, secret)
 	if err != nil {
 		return nil, err
 	}
+
 	s3Usage := []S3UsageNCS{}
+
 	for _, t := range s3Users {
-		url := fmt.Sprintf("%s/v3/orgs/%s/projects/%s/s3-users/%s/quota", endpointIam, orgID, projectID, t.Id)
-		resp, err := MakeRequest(url, secret, "X-S11-CREDENTIAL")
+		requestURL := fmt.Sprintf("%s/v3/orgs/%s/projects/%s/s3-users/%s/quota", iamEndpoint(), orgID, projectID, t.ID)
+
+		resp, err := MakeRequest(requestURL, secret, "X-S11-CREDENTIAL")
 		if err != nil {
-			return nil, fmt.Errorf("get s3 info ncs user %s: %w", t.Id, err)
+			return nil, fmt.Errorf("get s3 info ncs user %s: %w", t.ID, err)
 		}
 
 		var currentUsage S3InfoNCS
 
 		if err := json.Unmarshal(resp, &currentUsage); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("unmarshal s3 info ncs user %s: %w", t.ID, err)
 		}
+
 		s3Usage = append(s3Usage, S3UsageNCS{S3UsersNCS: t, S3InfoNCS: currentUsage})
 	}
+
 	return s3Usage, nil
 }
 
 func GetS3Users(orgID, projectID, secret string) ([]S3UsersNCS, error) {
-	url := fmt.Sprintf("%s/v3/orgs/%s/projects/%s/s3-users", endpointIam, orgID, projectID)
-	resp, err := MakeRequest(url, secret, "X-S11-CREDENTIAL")
+	requestURL := fmt.Sprintf("%s/v3/orgs/%s/projects/%s/s3-users", iamEndpoint(), orgID, projectID)
+
+	resp, err := MakeRequest(requestURL, secret, "X-S11-CREDENTIAL")
 	if err != nil {
 		return nil, fmt.Errorf("get s3 users: %w", err)
 	}
 
 	var s3users []S3UsersNCS
-	err = json.Unmarshal(resp, &s3users)
 
-	return s3users, err
+	if err := json.Unmarshal(resp, &s3users); err != nil {
+		return nil, fmt.Errorf("unmarshal s3 users: %w", err)
+	}
+
+	return s3users, nil
 }
