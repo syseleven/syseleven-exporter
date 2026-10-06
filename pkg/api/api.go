@@ -18,20 +18,30 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 )
 
-type Error struct {
-	Detail string `json:"detail"`
-	Title  string `json:"title"`
-	Type   string `json:"type"`
-}
-
 var endpoint string
 var endpointIam string
+
+func GetRadosgwIdentifiers(orgID, projectID, secret string) ([]string, error) {
+	requestURL := fmt.Sprintf("%s/v3/orgs/%s/projects/%s/s3-users/radosgw-identifiers", endpointIam, orgID, projectID)
+	resp, err := MakeRequest(requestURL, secret, "X-S11-CREDENTIAL")
+	if err != nil {
+		return nil, fmt.Errorf("get radosgw identifiers: %w", err)
+	}
+
+	var identifiers []string
+	if err := json.Unmarshal(resp, &identifiers); err != nil {
+		return nil, fmt.Errorf("decode radosgw identifiers: %w", err)
+	}
+	return identifiers, nil
+}
 
 func MakeRequest(url string, token string, header string) ([]byte, error) {
 	req, err := http.NewRequest("GET", url, nil)
@@ -47,14 +57,11 @@ func MakeRequest(url string, token string, header string) ([]byte, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		var apiError Error
-
-		err = json.NewDecoder(resp.Body).Decode(&apiError)
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, err
 		}
-
-		return nil, fmt.Errorf("%s: %s (%s)", apiError.Title, apiError.Detail, apiError.Type)
+		return nil, errors.New(string(body))
 	}
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -152,24 +159,29 @@ func GetS3InfoNCS(projectID string) ([]S3UsageNCS, error) {
 
 	orgID := os.Getenv("IAM_ORG_ID")
 	secret := os.Getenv("OS_APPLICATION_CREDENTIAL_SECRET")
+	identifiers, err := GetRadosgwIdentifiers(orgID, projectID, secret)
+	if err != nil {
+		return nil, err
+	}
 	s3Users, err := GetS3Users(orgID, projectID, secret)
 	if err != nil {
 		return nil, err
 	}
-	s3Usage := []S3UsageNCS{}
-	for _, t := range s3Users {
-		url := fmt.Sprintf("%s/v3/orgs/%s/projects/%s/s3-users/%s/quota", endpointIam, orgID, projectID, t.Id)
-		resp, err := MakeRequest(url, secret, "X-S11-CREDENTIAL")
-		if err != nil {
-			return nil, fmt.Errorf("get s3 info ncs user %s: %w", t.Id, err)
-		}
+	s3Usage := make([]S3UsageNCS, 0, len(s3Users)*len(identifiers))
+	for _, user := range s3Users {
+		for _, target := range identifiers {
+			requestURL := fmt.Sprintf("%s/v3/orgs/%s/projects/%s/s3-users/%s/quota?target_object_storage=%s", endpointIam, orgID, projectID, user.Id, url.QueryEscape(target))
+			resp, err := MakeRequest(requestURL, secret, "X-S11-CREDENTIAL")
+			if err != nil {
+				return nil, fmt.Errorf("get s3 info ncs user %s target %s: %w", user.Id, target, err)
+			}
 
-		var currentUsage S3InfoNCS
-
-		if err := json.Unmarshal(resp, &currentUsage); err != nil {
-			return nil, err
+			var currentUsage S3InfoNCS
+			if err := json.Unmarshal(resp, &currentUsage); err != nil {
+				return nil, fmt.Errorf("decode s3 info ncs user %s target %s: %w", user.Id, target, err)
+			}
+			s3Usage = append(s3Usage, S3UsageNCS{S3UsersNCS: user, S3InfoNCS: currentUsage, Target: target})
 		}
-		s3Usage = append(s3Usage, S3UsageNCS{S3UsersNCS: t, S3InfoNCS: currentUsage})
 	}
 	return s3Usage, nil
 }

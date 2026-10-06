@@ -161,4 +161,5 @@ type S3InfoNCS struct {
 type S3UsageNCS struct {
 	S3UsersNCS
 	S3InfoNCS
+	Target string `json:"-"`
 }
