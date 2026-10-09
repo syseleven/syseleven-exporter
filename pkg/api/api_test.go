@@ -20,8 +20,9 @@ func TestMakeRequest_ValidationError(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected validation error")
 	}
-	if got := err.Error(); got != responseBody {
-		t.Fatalf("error = %q, want raw response %q", got, responseBody)
+	want := fmt.Sprintf("GET %s returned HTTP 422: %s", srv.URL, responseBody)
+	if got := err.Error(); got != want {
+		t.Fatalf("error = %q, want %q", got, want)
 	}
 }
 
@@ -94,10 +95,19 @@ func TestGetQuotaV3_ErrorPropagation(t *testing.T) {
 			t.Fatal("got nil error — API failure was completely undetected")
 		}
 		if !strings.Contains(err.Error(), "get quota v3:") {
-			t.Fatalf("missing function context in error\n  want: contains %q\n  got:  %q", "get quota v3:", err.Error())
+			t.Fatalf("missing function context in error: %v", err)
+		}
+		if !strings.Contains(err.Error(), "HTTP 500") {
+			t.Fatalf("missing HTTP status in error: %v", err)
+		}
+		if !strings.Contains(err.Error(), srv.URL+"/v3/projects/proj-abc/quota") {
+			t.Fatalf("missing request URL in error: %v", err)
+		}
+		if !strings.Contains(err.Error(), `{"title":"Internal Server Error"`) {
+			t.Fatalf("missing raw response body in error: %v", err)
 		}
 		if !strings.Contains(err.Error(), "Keystone authentication failed") {
-			t.Fatalf("missing real API message in error\n  want: contains %q\n  got:  %q", "Keystone authentication failed", err.Error())
+			t.Fatalf("missing raw API error detail: %v", err)
 		}
 		if strings.Contains(err.Error(), "unexpected end of JSON input") {
 			t.Fatalf("got misleading json parse error instead of real API error\n  got: %q", err.Error())
