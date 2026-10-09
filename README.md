@@ -92,6 +92,8 @@ docker pull syseleven/syseleven-exporter:<TAG>
 
 ## Metrics
 
+All NCS S3 metrics include `project`, `s3username`, `description`, and `target` labels. The `target` label contains the RadosGW identifier returned by the IAM API.
+
 | Metric | Description |
 | ------ | ----------- |
 | syseleven_compute_cores_total | Quota for number of compute cores per `region` and `project` |
