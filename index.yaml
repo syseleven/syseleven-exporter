@@ -2,6 +2,16 @@ apiVersion: v1
 entries:
   syseleven-exporter:
   - apiVersion: v2
+    appVersion: 2.1.1
+    created: "2026-10-12T12:11:15.476999217Z"
+    description: A Helm Chart to deploy the SysEleven Exporter in Kubernetes.
+    digest: a110a07ae3f6c4e6d1ce3d82f34b2d609c81da1543d457e64c4369b02c517ae1
+    name: syseleven-exporter
+    type: application
+    urls:
+    - https://github.com/syseleven/syseleven-exporter/releases/download/chart-2.4.1/syseleven-exporter-2.4.1.tgz
+    version: 2.4.1
+  - apiVersion: v2
     appVersion: 2.1.0
     created: "2026-07-29T12:31:48.089130535Z"
     description: A Helm Chart to deploy the SysEleven Exporter in Kubernetes.
@@ -181,4 +191,4 @@ entries:
     urls:
     - https://github.com/syseleven/syseleven-exporter/releases/download/syseleven-exporter-0.5.0/syseleven-exporter-0.5.0.tgz
     version: 0.5.0
-generated: "2026-07-29T12:31:48.089199253Z"
+generated: "2026-10-12T12:11:15.477062113Z"
