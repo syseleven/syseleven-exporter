@@ -50,6 +50,7 @@ spec:
               {{- end }}
           ports:
             - containerPort: {{ .Values.service.internalPort }}
+              protocol: TCP
           livenessProbe:
             httpGet:
               path: /
